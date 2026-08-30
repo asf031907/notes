@@ -1,4 +1,4 @@
-### Architecture
+## Architecture
 
 <pre><code>                    XAUUSD MASTER ENGINE
                            │
@@ -47,7 +47,7 @@
           WATCH       CONFIRMED      ENTRY
              │
              └──────── NO TRADE</code></pre>
-### সবচেয়ে গুরুত্বপূর্ণ architectural rule
+#### সবচেয়ে গুরুত্বপূর্ণ architectural rule
 
 **প্রতিটি module independently signal দেবে না।**
 
