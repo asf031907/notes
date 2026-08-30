@@ -81,7 +81,7 @@ Output:
 <pre><code>LIQUIDITY LOCATION
 EVENT
 POI CANDIDATE</code></pre>
-###### Layer 3 — Confirmation
+#### Layer 3 — Confirmation
 
 **1H**
 
@@ -89,7 +89,7 @@ Output:
 <pre><code>DISPLACEMENT
 CISD
 STRUCTURAL CONFIRMATION</code></pre>
-###### Layer 4 — Cross-Market Validation
+#### Layer 4 — Cross-Market Validation
 
 **XAGUSD**
 
@@ -98,7 +98,7 @@ Output:
 CONFIRMATION
 CONTRADICTION
 ABSENT</code></pre>
-###### Layer 5 — Execution
+#### Layer 5 — Execution
 
 **30M**
 
