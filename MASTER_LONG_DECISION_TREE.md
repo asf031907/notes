@@ -1,3 +1,19 @@
+### MODULE I — 30M REFINEMENT
+
+এখন 30M-এর কাজ:
+
+**Better entry**
+
+না:
+
+**Different direction.**
+
+অর্থাৎ:
+
+<pre><code>1H = "I want to buy."
+30M = "Where exactly?"</code></pre>
+এটা architecture-এর সবচেয়ে clean formulation।
+
 ### ENTRY LOGIC
 
 **LONG**
