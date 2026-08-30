@@ -66,14 +66,14 @@
 ### — Data Flow
 আমাদের data flow হবে:
 
-## Layer 1 — Context
+#### Layer 1 — Context
 
 **1W → 1D**
 
 Output:
 <pre><code>REGIME
 BIAS</code></pre>
-## Layer 2 — Location
+#### Layer 2 — Location
 
 **4H**
 
@@ -81,7 +81,7 @@ Output:
 <pre><code>LIQUIDITY LOCATION
 EVENT
 POI CANDIDATE</code></pre>
-## Layer 3 — Confirmation
+###### Layer 3 — Confirmation
 
 **1H**
 
@@ -89,7 +89,7 @@ Output:
 <pre><code>DISPLACEMENT
 CISD
 STRUCTURAL CONFIRMATION</code></pre>
-## Layer 4 — Cross-Market Validation
+###### Layer 4 — Cross-Market Validation
 
 **XAGUSD**
 
@@ -98,7 +98,7 @@ Output:
 CONFIRMATION
 CONTRADICTION
 ABSENT</code></pre>
-## Layer 5 — Execution
+###### Layer 5 — Execution
 
 **30M**
 
@@ -115,12 +115,12 @@ INVALIDATION</code></pre>
 1H Displacement
 CISD
 Risk</code></pre>
-## Execution
+#### Execution
 <pre><code>FVG
 IFVG
 Breaker
 30M refinement</code></pre>
-## Research / Enhancement
+#### Research / Enhancement
 <pre><code>CRT
 SMT
 Fractal</code></pre>
