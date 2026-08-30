@@ -1,6 +1,6 @@
-# CORE বনাম ENHANCEMENT
+### CORE বনাম ENHANCEMENT
 
-### CORE — Setup-এর backbone
+**CORE — Setup-এর backbone**
 
 <pre><code>HTF Location
 +
@@ -12,7 +12,7 @@ Valid POI
 +
 LTF Confirmation</code></pre>
 
-### ENHANCEMENT
+**ENHANCEMENT**
 
 <pre><code>CRT
 SMT
@@ -21,16 +21,16 @@ Breaker
 FVG
 Fractal relationship</code></pre>
 
-তবে “enhancement” মানে irrelevant নয়। এগুলো specific contexts-এ weight/priority পাবে।
+তবে "enhancement" মানে irrelevant নয়। এগুলো specific contexts-এ weight/priority পাবে।
 
 ---
 
-## Master Engine-কে Score করা যায়
+### Master Engine-কে Score করা যায়
 
 আমি এখন একটি candidate scoring model propose করছি:
 
 | Component | Score |
-| :--- | ---: |
+| :--- | :---: |
 | HTF regime aligned | +2 |
 | 1D bias aligned | +2 |
 | 4H liquidity location | +2 |
@@ -45,7 +45,7 @@ Maximum:
 
 **17 points**
 
-### তারপর:
+**তারপর:**
 
 <pre><code>14-17 = A+ setup
 11-13 = A setup
