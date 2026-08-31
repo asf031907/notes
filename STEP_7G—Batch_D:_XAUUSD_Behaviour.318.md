@@ -311,3 +311,121 @@ Preferred execution window
 → higher execution priority</code></pre>
 
 **এটা অনেক বেশি flexible।**
+
+#### 12. এখন আমাদের XAUUSD Engine-এর “No Trade” framework তৈরি হচ্ছে
+
+এটা আমার কাছে Batch D-এর সবচেয়ে valuable output।
+
+##### 🚫 Potential Hard Block
+
+<pre><code>Invalid structure
+OR
+Setup already invalidated
+OR
+HTF direction conflict
+OR
+Contradictory structural confirmation</code></pre>
+
+##### 🟡 Caution
+
+<pre><code>Major macro event nearby
+OR
+Extreme volatility
+OR
+Unclear liquidity state
+OR
+Wide/poor execution conditions</code></pre>
+
+##### 🟢 Normal
+
+<pre><code>Clear HTF context
++
+Liquidity event
++
+Reclaim
++
+CISD/MSS
++
+Valid POI</code></pre>
+
+এটা future engine-এর **regime/state machine-এর ভিত্তি** হতে পারে।
+
+---
+
+#### 13. Updated XAUUSD Master Engine
+
+এখন architecture:
+
+<pre><code>            1W
+             │
+      MACRO STRUCTURE
+             │
+             ▼
+            1D
+    DIRECTIONAL CONTEXT
+             │
+             ▼
+            4H
+  RANGE + LIQUIDITY EVENT
+             │
+             ▼
+      SWEEP / RECLAIM
+             │
+      ┌──────┴──────┐
+     CRT       Turtle Soup
+      └──────┬──────┘
+             │
+             ▼
+            1H
+    DELIVERY / STRUCTURE
+             │
+      ┌──────┴──────┐
+     CISD          MSS
+      └──────┬──────┘
+             │
+             ▼
+            SMT
+         XAU ↔ XAG
+             │
+             ▼
+       REPRICING POI
+             │
+      ┌──────┼──────┐
+     FVG    IFVG   Breaker
+      └──────┼──────┘
+             │
+             ▼
+          UNICORN
+             │
+             ▼
+      SESSION FILTER
+             │
+             ▼
+        NEWS/REGIME
+             │
+             ▼
+            30M
+         EXECUTION</code></pre>
+
+এখানে **Session** এবং **News** final directional engine নয়।
+
+এগুলো **execution/risk regime layer**।
+
+---
+
+### 🔥 Batch D-এর সবচেয়ে বড় conclusion
+
+আমাদের engine এখন আর শুধু:
+
+> **“Signal generator”**
+
+হওয়ার দিকে যাচ্ছে না।
+
+বরং:
+
+> **Context → Event → Confirmation → Validation → Regime → Execution**
+
+এই architecture-এ যাচ্ছে।
+
+এটাই অনেক বেশি professional।
+
