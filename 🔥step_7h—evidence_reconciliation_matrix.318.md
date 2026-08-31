@@ -1,0 +1,1670 @@
+এই ধাপে আমাদের লক্ষ্য indicator concepts নয়; বরং Gold নিজে কীভাবে behave করে, যাতে Master Engine-এর rules XAUUSD-এর জন্য বাস্তবসম্মত হয়।
+
+একটা methodological distinction আগে: নিচের market-behaviour findings-এর কিছু academic/primary-source evidence থেকে, আর session-specific trading observations-এর কিছু secondary sources থেকে। তাই আমি “proven market fact” এবং “testable hypothesis” আলাদা রাখছি।
+
+### STEP 7G — Batch D: XAUUSD Behaviour
+
+#### 1. প্রথম principle: XAUUSD-এর movement uniform নয়
+
+Intraday research-এ gold-এর volatility trading day জুড়ে পরিবর্তিত হয়; historical gold-futures research-ও intraday/interday volatility variation পেয়েছে।
+
+আর 2026-এর World Gold Council analysis-এ spot gold-এর 20-minute data ব্যবহার করে দেখা হয়েছে যে Asian এবং US trading hours-এর activity gold-এর movement-এ গুরুত্বপূর্ণ ভূমিকা রাখছে।
+
+**অর্থাৎ আমাদের engine-এর জন্য:**
+
+> **Time/session = contextual variable, not decoration.**
+
+**কিন্তু এখানেই একটা correction দরকার।**
+
+#### 2. তোমার বর্তমান Kill Zone framework-কে blindly hard-code করব না
+
+তুমি ব্যবহার করো:
+
+<pre><code>UTC-4 New York
+
+ASIA          19:00-22:00
+LONDON        02:00-05:00
+NEW YORK      07:00-10:00
+LONDON CLOSE  10:00-12:00</code></pre>
+
+এগুলো তোমার established chart framework।
+
+আমি এগুলো research configuration হিসেবে retain করছি।
+
+কিন্তু research-এর evidence দেখাচ্ছে gold-এর active behaviour শুধু এই narrow windows-এ সীমাবদ্ধ নয়। London/New York overlap-এ activity গুরুত্বপূর্ণ, আর US macro events-এর সময় volatility ও execution conditions দ্রুত বদলাতে পারে।
+
+**তাই:**
+
+**Kill Zone ≠ mandatory HTF condition.**
+
+এটা আমাদের আগের সিদ্ধান্তকেও reinforce করছে।
+
+---
+
+#### 3. Swing Engine-এর জন্য session-এর আসল role
+
+তুমি swing trade করতে চেয়েছো।
+
+তাই 4H/1D setup-এর জন্য:
+
+❌ **"4H signal only valid during NY Kill Zone"**
+
+আমি এটা চাই না।
+
+**বরং:**
+
+<pre><code>1W / 1D / 4H
+     ↓
+STRUCTURAL SETUP
+     ↓
+SESSION = CONTEXT
+     ↓
+1H / 30M
+EXECUTION TIMING</code></pre>
+
+অর্থাৎ **HTF setup session-independent হতে পারে।**
+
+কিন্তু execution-এর সময় session behaviour গুরুত্বপূর্ণ।
+
+এটাই তোমার swing objective-এর সঙ্গে সবচেয়ে coherent।
+
+---
+
+#### 4. Asia-কে আমরা কীভাবে ব্যবহার করব?
+
+Current external evidence Asian hours-কে gold-এর price behaviour-এর গুরুত্বপূর্ণ component হিসেবে দেখাচ্ছে; WGC-এর 2026 analysis-এ Asian activity-এর সঙ্গে gold-এর support/rebound behaviour-এর সম্পর্কও দেখা গেছে।
+
+তাই আমি আগের simplistic assumption:
+
+> **“Asia = useless / dead session”**
+
+**reject করছি।**
+
+**বরং:**
+
+**Asia = Range / Reference Context Candidate**
+
+**যেমন:**
+
+<pre><code>Asia High
+Asia Low
+   ↓
+London / NY
+   ↓
+Does price attack one side?
+   ↓
+Sweep?
+   ↓
+Reclaim?</code></pre>
+
+এটা আমাদের liquidity architecture-এর সঙ্গে naturally fit করে।
+
+**তবে Asia range sweep automatically valid trade setup—এটা এখনো প্রমাণিত নয়।**
+
+---
+
+#### 5. London-এর role
+
+Historical research দেখায় London এবং New York দুটোই gold price discovery-তে গুরুত্বপূর্ণ; তবে 17 বছরের intraday study-তে New York futures গড়ে larger price-discovery role দেখিয়েছে, এবং intraday variation liquidity ও macro announcements-এর সঙ্গে সম্পর্কিত ছিল।
+
+**তাই:**
+
+**London = potential liquidity discovery / transition phase**
+
+**কিন্তু:**
+
+<pre><code>London sweep
+≠
+automatic reversal</code></pre>
+
+**আমাদের existing architecture:**
+
+<pre><code>London liquidity event
+           ↓
+    4H/1H structure
+           ↓
+        CISD/MSS
+           ↓
+          POI</code></pre>
+
+এর সঙ্গে ভালোভাবে fit করে।
+
+---
+
+#### 6. New York-কে বিশেষ গুরুত্ব দিতে হবে
+
+এখানে evidence শক্তিশালী।
+
+New York futures gold price discovery-তে historically significant role রাখে, এবং macroeconomic announcements-এর সঙ্গে intraday price discovery-এর variation সম্পর্কিত।
+
+2026-এর current environment-এও US inflation, Fed expectations এবং macro data gold-এর movement-এ material impact করছে।
+
+**তাই Master Engine-এ:**
+
+**NY = High-impact execution regime**
+
+**কিন্তু:**
+
+> **High volatility = high-quality setup নয়।**
+
+**বরং high volatility দুই জিনিস করতে পারে:**
+
+<pre><code>A. Valid breakout accelerate
+B. False sweep / slippage / violent reversal create</code></pre>
+
+এটা আমাদের engine-এর জন্য অত্যন্ত গুরুত্বপূর্ণ।
+
+#### 7. News Filter — এটা এখন mandatory research component
+
+আমরা আগে news নিয়ে খুব বেশি কথা বলিনি।
+
+এখন XAUUSD-specific research থেকে এটা বাদ দেওয়া ঠিক হবে না।
+
+High-impact US data gold-এর intraday behaviour significantly alter করতে পারে; current trading guidance-ও CPI/NFP/FOMC-type events-এ rapid volatility এবং execution-risk-এর কথা বলছে।
+
+**তাই final engine-এ আমি news predictor বানাতে চাই না।**
+
+**বরং:**
+
+<pre><code>HIGH IMPACT EVENT
+        ↓
+   RISK REGIME
+        ↓
+NORMAL / CAUTION / BLOCK</code></pre>
+
+**Important:**
+
+Pine Script নিজে complete economic-calendar intelligence-এর জায়গায় বসবে না।
+
+তাই final architecture-এ **manual/session/news configuration** বা TradingView-supported event mechanism-এর feasibility আলাদাভাবে যাচাই করতে হবে।
+
+---
+
+#### 8. Fake Sweep বনাম Genuine Sweep
+
+এটাই আমাদের engine-এর central problem।
+
+আমাদের এখন পর্যন্ত architecture:
+
+<pre><code>Liquidity Sweep
+       ↓
+    Reclaim
+       ↓
+   CISD/MSS</code></pre>
+
+এটা good start।
+
+**কিন্তু XAUUSD-এর high-volatility regime-এ আরও একটি distinction দরকার:**
+
+**Type A — Reversal Sweep**
+
+<pre><code>Liquidity taken
+       ↓
+ Strong reclaim
+       ↓
+ Delivery shift
+       ↓
+Opposite movement</code></pre>
+
+**Type B — Continuation Sweep**
+
+<pre><code>Liquidity taken
+       ↓
+No meaningful reclaim
+       ↓
+  Continuation</code></pre>
+
+**Type C — News Expansion**
+
+<pre><code>Liquidity taken
+       ↓
+Extreme volatility
+       ↓
+Multiple levels breached
+       ↓
+Normal structure temporarily unreliable</code></pre>
+
+**তৃতীয় type-এর জন্য Trade Block / Caution regime প্রয়োজন হতে পারে।**
+
+---
+
+#### 9. Displacement-এর XAUUSD-specific definition এখন আরও গুরুত্বপূর্ণ
+
+আমরা আগে বলেছিলাম:
+
+> **“একটি বড় candle = displacement” গ্রহণ করব না।**
+
+এখনও সেই সিদ্ধান্তই থাকছে।
+
+আমাদের eventual detector সম্ভবত combine করবে:
+
+<pre><code>Directional expansion
++
+Structure consequence
++
+Close quality
++
+Relative volatility</code></pre>
+
+**যেমন:**
+
+<pre><code>Current impulse range
+          vs
+Recent 1H/30M range distribution</code></pre>
+
+এতে fixed **$X** candle-size rule-এর dependency কমবে।
+
+এখনও exact formula lock করছি না।
+
+---
+
+#### 10. Day-of-week নিয়ে interesting evidence আছে — কিন্তু rule বানাব না
+
+Academic research-এ gold-related volatility products-এ Monday/Friday seasonality পাওয়া গেছে, কিন্তু literature-এ এই effect নিয়ে contradictory findings-ও আছে।
+
+আর London gold-এর historical sample-এ volatility seasonality-এর pattern আলাদা ছিল।
+
+**Professional conclusion:**
+
+<pre><code>Monday = avoid
+Friday = avoid</code></pre>
+
+এমন arbitrary rule দেব না।
+
+**বরং:**
+
+**Day-of-week = research feature**
+
+যদি backtest-এ XAUUSD-specific sample-এ statistically meaningful degradation পাওয়া যায়, তখন filter হবে।
+
+---
+
+#### 11. Session overlap নিয়ে final interpretation
+
+Current sources consistently indicate London–New York overlap-এর activity/volatility গুরুত্বপূর্ণ, যদিও exact hours source/feed/DST অনুযায়ী পরিবর্তিত হয়।
+
+কিন্তু আমাদের engine-এর জন্য আমি এটাকে:
+
+**Execution Opportunity Window**
+
+হিসেবে রাখছি।
+
+**Not:**
+
+**Mandatory Trade Window**
+
+**অর্থাৎ:**
+
+<pre><code>Valid 4H → 1H setup
+          ↓
+No London/NY overlap
+          ↓
+  Trade impossible ❌</code></pre>
+
+এমন হবে না।
+
+**বরং:**
+
+<pre><code>Valid setup
+     +
+Preferred execution window
+→ higher execution priority</code></pre>
+
+**এটা অনেক বেশি flexible।**
+
+#### 12. এখন আমাদের XAUUSD Engine-এর “No Trade” framework তৈরি হচ্ছে
+
+এটা আমার কাছে Batch D-এর সবচেয়ে valuable output।
+
+##### 🚫 Potential Hard Block
+
+<pre><code>Invalid structure
+OR
+Setup already invalidated
+OR
+HTF direction conflict
+OR
+Contradictory structural confirmation</code></pre>
+
+##### 🟡 Caution
+
+<pre><code>Major macro event nearby
+OR
+Extreme volatility
+OR
+Unclear liquidity state
+OR
+Wide/poor execution conditions</code></pre>
+
+##### 🟢 Normal
+
+<pre><code>Clear HTF context
++
+Liquidity event
++
+Reclaim
++
+CISD/MSS
++
+Valid POI</code></pre>
+
+এটা future engine-এর **regime/state machine-এর ভিত্তি** হতে পারে।
+
+---
+
+#### 13. Updated XAUUSD Master Engine
+
+এখন architecture:
+
+<pre><code>            1W
+             │
+      MACRO STRUCTURE
+             │
+             ▼
+            1D
+    DIRECTIONAL CONTEXT
+             │
+             ▼
+            4H
+  RANGE + LIQUIDITY EVENT
+             │
+             ▼
+      SWEEP / RECLAIM
+             │
+      ┌──────┴──────┐
+     CRT       Turtle Soup
+      └──────┬──────┘
+             │
+             ▼
+            1H
+    DELIVERY / STRUCTURE
+             │
+      ┌──────┴──────┐
+     CISD          MSS
+      └──────┬──────┘
+             │
+             ▼
+            SMT
+         XAU ↔ XAG
+             │
+             ▼
+       REPRICING POI
+             │
+      ┌──────┼──────┐
+     FVG    IFVG   Breaker
+      └──────┼──────┘
+             │
+             ▼
+          UNICORN
+             │
+             ▼
+      SESSION FILTER
+             │
+             ▼
+        NEWS/REGIME
+             │
+             ▼
+            30M
+         EXECUTION</code></pre>
+
+এখানে **Session** এবং **News** final directional engine নয়।
+
+এগুলো **execution/risk regime layer**।
+
+---
+
+### 🔥 Batch D-এর সবচেয়ে বড় conclusion
+
+আমাদের engine এখন আর শুধু:
+
+> **“Signal generator”**
+
+হওয়ার দিকে যাচ্ছে না।
+
+বরং:
+
+> **Context → Event → Confirmation → Validation → Regime → Execution**
+
+এই architecture-এ যাচ্ছে।
+
+এটাই অনেক বেশি professional।
+
+
+
+এই ধাপের উদ্দেশ্য একটাই:
+
+> CISD, MSS, C2, CRT Reclaim এবং Turtle Soup confirmation—এগুলো কি আলাদা edge, নাকি একই underlying market event-এর আলাদা detector?
+
+এটা পরিষ্কার না হলে পরে আমরা একই তথ্যকে ৩–৫ বার “confluence” হিসেবে গণনা করে ফেলতে পারি।
+
+---
+
+### STEP 7G — B.5 Structural Confirmation Reconciliation
+
+1. **প্রথমে source evidence**
+
+2. তোমার Fractal source-এ sequence সরাসরি:
+
+3. HTF level → sweep → close back → C2 → CISD → confirmation
+
+4. এবং code-এ C2-এর পর CISD level আলাদাভাবে track করা হয়; CISD trigger হয় relevant level-এর ওপর/নিচে close-এর মাধ্যমে।
+
+5. CRT-এর mechanics:
+
+6. **HTF range → one-side sweep → close back inside → opposite-side delivery**। অর্থাৎ CRT-এর core confirmation হচ্ছে reclaim/close-back; পরবর্তী lower-timeframe confirmation আলাদা refinement হতে পারে।
+
+7. MSS-এর contemporary definitions-এ liquidity event-এর পর displacement এবং relevant short-term swing break-কে structural confirmation হিসেবে ধরা হচ্ছে।
+
+8. এখন এগুলো একসঙ্গে রাখলে picture পরিষ্কার হয়।
+
+9. **এগুলো আলাদা edge নয়**
+
+10. **এগুলো একই structural event-এর আলাদা-আলাদা lens/resolution**
+
+11. **Core event একটাই:** Liquidity sweep + Invalidation of current direction + Reclaim/Displacement
+
+### 2. একই জিনিস নয় — কিন্তু একই chain-এর অংশ
+
+এটাই আজকের সবচেয়ে গুরুত্বপূর্ণ conclusion।
+
+আমি এগুলোকে আর:
+
+<pre><code>CISD = Signal #1
+MSS  = Signal #2
+C2   = Signal #3
+CRT  = Signal #4</code></pre>
+
+এভাবে দেখছি না।
+
+বরং:
+
+<pre><code>       LIQUIDITY EVENT
+              │
+       ┌──────┴──────┐
+       │             │
+     SWEEP         RANGE
+       │             │
+       └──────┬──────┘
+              ↓
+         RECLAIM / C2
+              ↓
+        DELIVERY SHIFT
+              ↓
+   MSS / CISD confirmation
+              ↓
+          REPRICING
+              ↓
+            ENTRY</code></pre>
+
+### 3. C2-এর প্রকৃত role
+
+Fractal source অনুযায়ী C2 তৈরি হয় যখন HTF level sweep করার পরে price সেই level-এর ভেতরে close করে। তারপর system CISD confirmation-এর অপেক্ষা করে।
+
+**তাই:**
+
+**C2 = Reclaim event**
+
+এটা final entry signal নয়।
+
+এটা বলছে:
+
+> “Liquidity নেওয়ার পর price আবার accepted range-এর ভেতরে এসেছে।”
+
+---
+
+### 4. CRT-এর প্রকৃত role
+
+CRT-ও একই জায়গায় কাজ করছে:
+
+<pre><code>Range
+  ↓
+Sweep
+  ↓
+Close back inside</code></pre>
+
+অর্থাৎ CRT-এর reclaim এবং Fractal-এর C2 খুব closely related।
+
+**তাই:**
+
+> C2 ≈ implementation label for a confirmed sweep/reclaim event
+
+এবং
+
+> CRT ≈ range-based framework around that event
+
+এগুলোকে দুইটি independent confirmation হিসেবে count করা যাবে না।
+
+**Decision:**
+
+**CRT → Context Framework 🟡**
+
+**C2 → Event State 🟡**
+
+
+### 5. MSS বনাম CISD — এখানে আসল কাজ
+
+এখানে subtle distinction আছে।
+
+**MSS**
+
+সাধারণ structural interpretation:
+
+<pre><code>Liquidity event
+       ↓
+  Displacement
+       ↓
+Relevant swing breaks
+       ↓
+      MSS</code></pre>
+
+অর্থাৎ MSS-এর focus:
+
+> Structure changed
+
+**CISD**
+
+আমাদের Fractal source-এর implementation-এ CISD level opposing-candle opens থেকে derived এবং price সেই level-এর মাধ্যমে close করলে confirmation trigger হয়।
+
+অর্থাৎ CISD-এর focus:
+
+> Delivery changed
+
+দুটো closely related, কিন্তু identical নয়।
+
+### 6. তাই আমরা MSS বাদ দিচ্ছি না
+
+বরং hierarchy করছি:
+
+<pre><code>RECLAIM
+  ↓
+C2 / CRT confirmation
+  ↓
+DELIVERY SHIFT
+  ├── CISD
+  └── MSS
+  ↓
+CONFIRMED REVERSAL</code></pre>
+
+এখনও প্রশ্ন:
+
+> MSS + CISD দুটো লাগবে?
+
+**আমার professional recommendation:**
+
+**না—প্রথম version-এ দুটোকে mandatory AND-condition করব না।**
+
+কারণ এতে:
+
+<pre><code>CISD ✓
+MSS  X</code></pre>
+
+হলে ভালো setup unnecessarily reject হতে পারে।
+
+অন্যদিকে:
+
+<pre><code>CISD ✓
+MSS  ✓</code></pre>
+
+হলে দুটোকে আলাদা 2-point confluence হিসেবে count করাও ভুল হতে পারে।
+
+### 7. বরং Confirmation Layer বানাই
+
+এখন architecture:
+
+<pre><code>       CONFIRMATION ENGINE
+                │
+         ┌──────┴──────┐
+         │             │
+       CISD           MSS
+         │             │
+         └──────┬──────┘
+                ↓
+        DELIVERY CONFIRMED</code></pre>
+
+**তার মানে:**
+
+**CISD এবং MSS = alternative detectors**  
+একই underlying state-এর।
+
+এটা এখন আমাদের strongest architectural hypothesis।
+
+---
+
+### 8. কিন্তু একটা exception আছে
+
+যদি future testing দেখায়:
+
+<pre><code>CISD alone
+Expected value = X
+
+MSS alone
+Expected value = Y
+
+CISD + MSS
+Expected value = Z</code></pre>
+
+এবং `Z` সত্যিই materially better হয়, তখন আমরা দুটোকে secondary confirmation hierarchy হিসেবে ব্যবহার করতে পারি।
+
+**কিন্তু সেটা research/backtest-এর পরে।**
+
+এখন আগে থেকে ধরে নেব না।
+
+### 9. Turtle Soup কোথায় বসছে?
+
+এখন Turtle Soup-কে খুব সুন্দরভাবে position করা যায়:
+
+<pre><code>HTF Liquidity
+      ↓
+    Sweep
+      ↓
+   Reclaim
+      ↓
+     MSS
+      ↓
+  FVG / IFVG
+      ↓
+    Retest
+      ↓
+    Entry</code></pre>
+
+**অর্থাৎ Turtle Soup:**
+
+**একটি complete execution pathway**
+
+**আর CISD:**
+
+**একটি confirmation detector**
+
+**CRT:**
+
+**একটি range/event framework**
+
+**Fractal:**
+
+**একটি MTF reversal framework**
+
+এই distinction আমাদের system massively cleaner করবে।
+
+### 10. এখন পুরো structure নতুন করে দেখো
+
+<pre><code>        1W / 1D
+           │
+     CONTEXT / BIAS
+           │
+           ▼
+          4H
+   RANGE / LIQUIDITY
+           │
+           ▼
+    LIQUIDITY SWEEP
+           │
+           ▼
+    RECLAIM / C2 / CRT
+           │
+           ▼
+     DELIVERY SHIFT
+           │
+     ┌─────┴─────┐
+     │           │
+   CISD         MSS
+     │           │
+     └─────┬─────┘
+           │
+           ▼
+       CONFIRMED
+           │
+           ▼
+     REPRICING POI
+     ┌─────┼─────┐
+     │     │     │
+    FVG   IFVG Breaker
+     │     │     │
+     └─────┼─────┘
+           │
+           ▼
+        UNICORN
+           │
+           ▼
+     SMT VALIDATION
+           │
+           ▼
+      30M EXECUTION</code></pre>
+
+**এখন এটা অনেক বেশি coherent।**
+
+### 🚨 আরেকটি গুরুত্বপূর্ণ discovery
+
+CRT-এর own documentation-এও range model-কে timeframe-nested হিসেবে দেখা হয়—higher timeframe range এবং lower timeframe execution।
+
+**তাই আমাদের:**
+
+**4H → 1H → 30M**
+
+architecture arbitrary নয়।
+
+তবে এর অর্থ এই নয় যে **4H CRT অবশ্যই প্রতিটি trade-এর জন্য mandatory**।
+
+এটা এখনও test করতে হবে।
+
+
+### STEP 7G — Batch C: XAUUSD ↔ XAGUSD SMT
+
+#### 1. SMT-এর core definition
+
+SMT-এর basic structure:
+
+> একই সময়ে দুই correlated instrument-এর একটি নতুন swing high/low তৈরি করে, অন্যটি সেটি confirm করতে ব্যর্থ হলে divergence তৈরি হয়।
+
+XAUUSD–XAGUSD-কে সাধারণত positively correlated pair হিসেবে ব্যবহার করা হয়। তবে **correlated মানেই perfectly synchronized নয়**—এটাই আমাদের জন্য গুরুত্বপূর্ণ। Gold ও Silver-এর underlying demand drivers এবং volatility আলাদা; World Gold Council-ও দুটির market behaviour-এর উল্লেখযোগ্য পার্থক্য তুলে ধরেছে।
+
+**তাই:**
+
+**SMT = correlation failure**
+
+**কিন্তু**
+
+**correlation failure ≠ automatically reversal.**
+#### 2. আমাদের Master Engine-এর জন্য SMT-এর সবচেয়ে গুরুত্বপূর্ণ প্রশ্ন
+
+ধরা যাক:
+
+<pre><code>XAUUSD
+  ↓
+Previous High
+  ↓
+NEW HIGH / liquidity sweep</code></pre>
+
+কিন্তু একই সময়ে:
+
+<pre><code>XAGUSD
+  ↓
+Previous High
+  ↓
+FAILS TO MAKE NEW HIGH</code></pre>
+
+তাহলে:
+
+**Bearish SMT Candidate**
+
+এটা potentially বলছে XAU-এর নতুন high broad metal-strength দ্বারা confirmed হয়নি।
+
+**কিন্তু আমি এখানে SELL signal দিচ্ছি না।**
+
+কারণ আমাদের architecture already বলে:
+
+<pre><code>SMT
+ ↓
+WAIT
+ ↓
+Liquidity / Structure confirmation
+ ↓
+Execution</code></pre>
+
+এটা external research-এর সঙ্গে consistent: SMT-কে confirmation/filter হিসেবে ব্যবহার করার recommendation পাওয়া যাচ্ছে, standalone entry হিসেবে নয়।
+
+#### 3. Bullish SMT
+
+Inverse:
+
+<pre><code>XAU
+  ↓
+Previous Low
+  ↓
+NEW LOW / SSL sweep
+
+XAG
+  ↓
+Previous Low
+  ↓
+HOLDS ABOVE</code></pre>
+
+তাহলে:
+
+**Bullish SMT Candidate**
+
+**কিন্তু আবার:**
+
+**SMT → candidate**
+
+not
+
+**SMT → BUY**
+
+#### 4. এখানে একটা বড় সমস্যা পেলাম: “SMT” শব্দটা অনেক loosely ব্যবহৃত হয়
+
+কিছু implementations pivot-high/pivot-low comparison ব্যবহার করে।
+
+অন্যদিকে broader ICT explanations এটাকে key liquidity extreme-এর failure-to-confirm হিসেবে describe করে।
+
+এই দুটো একই জিনিস নয়।
+
+তাই আমাদের Pine Engine-এ:
+
+❌ **“যেকোনো pivot mismatch = SMT”**
+
+এই rule ব্যবহার করব না।
+
+বরং আমাদের SMT detector-কে event-aware করতে হবে।
+
+---
+
+#### 5. Master Engine-এর জন্য আমি SMT-কে এভাবে redefine করার recommendation দিচ্ছি
+
+<pre><code>            SMT DETECTOR
+                 │
+                 ▼
+       Identify reference swing
+                 │
+                 ▼
+       Is XAU attacking liquidity?
+                 │
+           YES   │
+                 ▼
+       Is XAG confirming extreme?
+           /           \
+         YES            NO
+          │             │
+        NO SMT    SMT CANDIDATE
+                        │
+                        ▼
+                   WAIT FOR XAU
+              STRUCTURAL CONFIRMATION</code></pre>
+
+**অর্থাৎ SMT নিজে event নয়।**
+
+**এটা liquidity event-এর cross-market validation।**
+
+#### 6. SMT-এর সবচেয়ে গুরুত্বপূর্ণ role এখন পরিষ্কার
+
+আমাদের architecture:
+
+<pre><code>4H
+Liquidity Sweep
+  ↓
+1H
+Delivery Shift / CISD / MSS
+  ↓
+SMT
+  ↓
+POI
+  ↓
+30M Entry</code></pre>
+
+কিন্তু আমি আরও একটি alternative test রাখছি:
+
+<pre><code>4H
+Liquidity Sweep
+  ↓
+SMT
+  ↓
+1H CISD/MSS
+  ↓
+POI
+  ↓
+30M Entry</code></pre>
+
+**অর্থাৎ SMT confirmation-এর আগে এবং পরে—দুই অবস্থাতেই test হবে।**
+
+আমরা এখনই কোনটা superior তা assume করব না।
+
+#### 7. SMT-এর সবচেয়ে বড় blind spot: correlation regime
+
+এটা খুব গুরুত্বপূর্ণ।
+
+Gold এবং Silver একই precious-metals complex-এর অংশ হলেও তাদের behaviour এক নয়। Gold তুলনামূলকভাবে deeper/more liquid এবং Silver বেশি cyclical/high-beta behaviour দেখাতে পারে।
+
+**তাই:**
+
+<pre><code>Normal correlation
+  ↓
+SMT divergence = potentially meaningful</code></pre>
+
+**কিন্তু:**
+
+<pre><code>Correlation breakdown
+  ↓
+SMT divergence = potentially meaningless</code></pre>
+
+এই কারণে final engine-এ SMT-এর আগে **Correlation Quality Filter** রাখার সম্ভাবনা তৈরি হয়েছে।
+
+---
+
+#### 8. আমি এখানে একটি গুরুত্বপূর্ণ engineering decision নিচ্ছি
+
+**SMT mandatory হবে না।**
+
+অর্থাৎ:
+
+<pre><code>SMT absent
+  ↓
+❌ NO TRADE</code></pre>
+
+এই rule আমি reject করছি।
+
+কারণ SMT না থাকা মানে bearish/bullish setup invalid—এমন evidence এখন আমাদের কাছে নেই।
+
+**বরং:**
+
+<pre><code>VALID SETUP
+  │
+  ├── SMT present → QUALITY BOOST
+  │
+  └── SMT absent  → NORMAL</code></pre>
+
+**কিন্তু:**
+
+<pre><code>VALID LONG SETUP
++
+Strong Bearish SMT
+  ↓
+REJECT / downgrade</code></pre>
+
+এটা test করার মতো hypothesis।
+
+**অর্থাৎ SMT-এর presence এবং contradiction-এর treatment একই হবে না।**
+
+#### 9. SMT-কে তিন-state system বানানোর recommendation
+
+এটা আমার current preferred design:
+
+| SMT State | Meaning | Engine treatment |
+| :--- | :--- | :--- |
+| 🟢 **Aligned SMT** | Setup direction-এর সঙ্গে divergence aligned | Quality boost |
+| 🟣 **No SMT** | কোনো meaningful divergence নেই | Neutral |
+| 🔴 **Contradictory SMT** | Setup-এর বিপরীত divergence | Downgrade / possible reject |
+
+**উদাহরণ:**
+
+**আমরা LONG খুঁজছি**
+
+<pre><code>XAU sweeps low
+XAG holds low
+      ↓
+ Bullish SMT
+      ↓
+  🟢 ALIGNED</code></pre>
+
+→ quality boost.
+
+**কিন্তু:**
+
+<pre><code>XAU sweeps low
+XAG also confirms low
+      ↓
+   No SMT
+      ↓
+  🟣 Neutral</code></pre>
+
+→ trade automatically rejected নয়।
+
+**আর:**
+
+<pre><code>XAU sweeps low
+XAG makes even stronger bearish low
+      ↓
+Bearish/contradictory structure
+      ↓
+  🔴 Warning</code></pre>
+
+→ setup downgrade/reject করার candidate।
+
+---
+
+#### 10. Timeframe নিয়ে গুরুত্বপূর্ণ সিদ্ধান্ত
+
+External sources SMT-এর জন্য H1/H4 bias থেকে M5–M15 execution পর্যন্ত বিভিন্ন frameworks ব্যবহার করছে।
+
+কিন্তু আমাদের system-এর architecture আলাদা:
+
+**1W → 1D → 4H → 1H → 30M**
+
+তাই অন্য trader-এর recommended timeframe copy করব না।
+
+আমাদের research question হবে:
+
+**HTF SMT**
+4H XAU ↔ 4H XAG
+
+ব্যবহার করে কি 1H reversal quality বাড়ে?
+
+**Execution SMT**
+1H XAU ↔ 1H XAG
+
+ব্যবহার করে কি 30M entry quality বাড়ে?
+
+এবং potentially:
+
+**30M SMT**
+শুধু execution refinement-এর জন্য।
+
+---
+
+#### 11. আমার current recommendation
+
+আমি 4H + 1H SMT test করতে চাই।
+
+30M SMT-কে এখনই core module করব না।
+
+কারণ আমাদের লক্ষ্য:
+
+> 30M-এ entry execute করা, 30M-কে পুরো decision-making engine বানানো নয়।
+
+**তাই:**
+
+<pre><code>1W / 1D
+Context
+
+4H
+Liquidity + SMT context
+
+1H
+CISD / MSS + SMT confirmation
+
+30M
+Execution</code></pre>
+
+**এটা অনেক cleaner।**
+
+---
+
+#### 12. SMT কি independent information দেয়?
+
+এখন পর্যন্ত research-এর ভিত্তিতে:
+
+**সম্ভাবনা: হ্যাঁ**
+
+কারণ SMT অন্য price series থেকে information নেয়।
+
+আমাদের primary XAU chart একা যে তথ্য দেখতে পায় না:
+
+<pre><code>XAU event
+  +
+XAG response</code></pre>
+
+SMT সেই cross-market relationship যোগ করছে।
+
+সুতরাং এটি FVG/CISD-এর মতো একই chart-এর আরেকটি detector নয়।
+
+**Therefore:**
+
+**SMT is genuinely architecturally different.**
+
+এটাই কারণ আমি এটাকে engine-এ রাখার দিকে ঝুঁকছি।
+
+---
+
+#### 13. কিন্তু “SMT = institutional footprint” claim আমি এখনই গ্রহণ করছি না
+
+কিছু sources SMT-কে institutional manipulation-এর evidence হিসেবে describe করে।
+
+কিন্তু এটাকে causal fact হিসেবে আমাদের rulebook-এ লিখব না।
+
+আমাদের wording হবে:
+
+> SMT is a cross-market non-confirmation condition that may improve the probability assessment of a liquidity/structure event.
+
+**এটা scientifically অনেক cleaner।**
+
+### 🔥 STEP 7G — Batch C-এর সবচেয়ে গুরুত্বপূর্ণ conclusion
+
+SMT-কে আমি final engine-এ:
+
+❌ **Standalone Signal**
+হিসেবে রাখছি না।
+
+❌ **Mandatory Condition**
+হিসেও রাখছি না।
+
+✅ **Cross-Market Validation Layer**
+হিসেবে রাখছি।
+
+**এবং:**
+
+<pre><code>SMT PRESENT
+    ↓
+Quality ↑
+
+SMT ABSENT
+    ↓
+Neutral
+
+SMT CONTRADICTORY
+    ↓
+Quality ↓ / Reject Candidate</code></pre>
+
+**এটাই এখন SMT Architecture Hypothesis v1।**
+
+---
+
+### Updated Master Engine
+
+এখন পর্যন্ত architecture আরও mature হলো:
+
+<pre><code>        1W
+         │
+   MACRO CONTEXT
+         │
+         ▼
+        1D
+ DIRECTIONAL BIAS
+         │
+         ▼
+        4H
+RANGE + LIQUIDITY EVENT
+         │
+         ▼
+  SWEEP / RECLAIM
+         │
+   ┌─────┴─────┐
+   │           │
+  CRT     Turtle Soup
+   │           │
+   └─────┬─────┘
+         │
+         ▼
+        1H
+DELIVERY / STRUCTURE
+         │
+   ┌─────┴─────┐
+   │           │
+ CISD         MSS
+   │           │
+   └─────┬─────┘
+         │
+         ▼
+        SMT
+     XAU ↔ XAG
+         │
+         ▼
+   REPRICING POI
+   ┌─────┼─────┐
+   │     │     │
+  FVG   IFVG Breaker
+   │     │     │
+   └─────┼─────┘
+         │
+         ▼
+      UNICORN
+         │
+         ▼
+       30M
+    EXECUTION</code></pre>
+
+
+### STEP 7H — EVIDENCE RECONCILIATION MATRIX
+
+#### 1. আমাদের final evaluation framework
+
+প্রতিটি concept-কে ৬টি প্রশ্নে বিচার করছি:
+
+1. **Unique information দেয়?**
+2. **অন্য concept-এর সঙ্গে duplicate কি না?**
+3. **XAUUSD-এর জন্য logically relevant?**
+4. **কোন timeframe-এ সবচেয়ে natural?**
+5. **Directional signal, confirmation, POI, filter—কোন role?**
+6. **Backtest ছাড়া rule lock করা নিরাপদ কি না?**
+
+---
+
+#### 2. MASTER MATRIX — Version 0.1
+
+| Concept | Primary Role | Recommended TF | Decision | Reason |
+| :--- | :--- | :---: | :---: | :--- |
+| **1W Structure** | Macro Context | 1W | 🟢 KEEP | Long-horizon structural context |
+| **1D Structure** | Directional Context | 1D | 🟢 KEEP | Swing bias-এর প্রধান context |
+| **Liquidity** | Market Event | 4H/1H | 🟢 CORE | বহু source-এর recurring primitive |
+| **Liquidity Sweep** | Trigger Event | 4H/1H | 🟢 CORE | Reversal/continuation distinction-এর ভিত্তি |
+| **CRT** | Range Framework | 4H | 🟢 KEEP / MERGE | Sweep + reclaim context |
+| **C2** | Reclaim State | 4H/1H | 🟡 MERGE CANDIDATE | CRT-এর reclaim-এর সঙ্গে overlap |
+| **Turtle Soup** | Reversal Model | 4H→1H | 🟢 KEEP | Complete sweep/reversal pathway |
+| **CISD** | Delivery Confirmation | 1H | 🟢 CORE | Delivery shift detector |
+| **MSS** | Structural Confirmation | 1H | 🟡 ALTERNATIVE | CISD-এর সঙ্গে overlap test required |
+| **FVG** | Repricing POI | 1H/30M | 🟢 KEEP | Entry location |
+| **IFVG** | Inversion POI | 1H/30M | 🟢 KEEP | Failed FVG state |
+| **Breaker** | Repricing POI | 1H/30M | 🟢 KEEP | Structural POI |
+| **Unicorn** | Composite POI | 1H/30M | 🟢 KEEP CANDIDATE | FVG + Breaker combination |
+| **Fractal Model** | MTF Framework | 4H→1H | 🟡 MERGE | Architecture rather than separate signal |
+| **SMT** | Cross-market Validation | 4H/1H | 🟢 KEEP | Independent XAG information |
+| **Session** | Execution Regime | 1H/30M | 🟢 KEEP | Timing/context |
+| **News Regime** | Risk Filter | 1H/30M | 🟡 KEEP | Potentially important, implementation constraint |
+| **Double Purge** | Invalidation Logic | 4H/1H | 🟡 TEST | Interesting but needs evidence |
+| **Inner Sweep** | Entry Refinement | 30M | 🟡 TEST | Potentially valuable execution trigger |
+| **Displacement** | Confirmation Component | 1H/30M | 🟢 KEEP | Needed to distinguish meaningful shift |
+| **Day-of-week** | Statistical Filter | — | 🟡 TEST | No hard rule yet |
+| **Kill Zone** | Timing Preference | 1H/30M | 🟢 KEEP | Preference, not HTF requirement |
+
+#### 3. এখন সবচেয়ে গুরুত্বপূর্ণ MERGE
+
+আমাদের final engine-এ আমি চাই না:
+
+<pre><code>CRT  ✓
+C2  ✓
+Turtle Soup  ✓
+Liquidity Sweep  ✓</code></pre>
+
+সবগুলোকে চারটি independent score দেওয়া হোক।
+
+এটা double/triple counting তৈরি করবে।
+
+**বরং:**
+
+<pre><code>         LIQUIDITY EVENT
+                │
+              SWEEP
+                │
+         ┌──────┴──────┐
+        CRT       Turtle Soup
+         └──────┬──────┘
+                │
+                ▼
+            RECLAIM/C2</code></pre>
+
+**Architectural interpretation:**
+
+**Liquidity Sweep = primitive**
+
+**CRT = framework**
+
+**Turtle Soup = setup model**
+
+**C2 = state/event**
+
+এগুলো আলাদা layer।
+
+---
+
+#### 4. CISD বনাম MSS
+
+এখানে final decision এখনো:
+
+**❌ Merge completely**  
+করছি না।
+
+**❌ দুটো mandatory**  
+করছি না।
+
+**বরং:**
+
+<pre><code>       DELIVERY / STRUCTURE SHIFT
+                   │
+            ┌──────┴──────┐
+           CISD          MSS
+            └──────┬──────┘
+                   │
+                   ▼
+              CONFIRMATION</code></pre>
+
+**Current rule:**
+
+> **CISD এবং MSS = competing/alternative confirmation detectors.**
+
+**Backtest-এ দেখা হবে:**
+
+* **CISD alone**
+* **MSS alone**
+* **CISD + MSS**
+* **কোনটি earliest?**
+* **কোনটি false-positive কমায়?**
+* **কোনটি XAUUSD-এর জন্য বেশি robust?**
+
+**এই test না হওয়া পর্যন্ত দুটোকে একই score দেওয়া হবে না।**
+
+---
+
+#### 5. FVG / IFVG / Breaker / Unicorn
+
+এখানে architecture আরও পরিষ্কার।
+
+এগুলো direction generator নয়।
+
+**বরং:**
+
+<pre><code>Direction
+    ↓
+Liquidity Event
+    ↓
+Confirmation
+    ↓
+   POI
+   ├─ FVG
+   ├─ IFVG
+   ├─ Breaker
+   └─ Unicorn</code></pre>
+
+**অর্থাৎ:**
+
+**FVG = POI**
+
+**IFVG = POI state/inversion**
+
+**Breaker = structural POI**
+
+**Unicorn = composite POI**
+
+**এগুলোকে একসঙ্গে “four confirmations” বানানো হবে না।**
+
+---
+
+#### 6. Unicorn-এর ক্ষেত্রে একটা সতর্কতা
+
+Unicorn visually খুব attractive কারণ:
+
+<pre><code>Breaker
++
+FVG
+=
+Unicorn</code></pre>
+
+কিন্তু এখানেই danger:
+
+যদি engine বলে:
+
+<pre><code>FVG  ✓
+Breaker  ✓
+Unicorn  ✓</code></pre>
+
+তাহলে একই underlying condition তিনবার score করা হবে।
+
+**তাই final architecture:**
+
+**Unicorn = composite classification**
+
+not:
+
+**Unicorn = additional confirmation point**
+
+**এটা খুব গুরুত্বপূর্ণ।**
+
+---
+
+#### 7. SMT-এর final provisional position
+
+আমাদের আগের research decision এখানে unchanged:
+
+<pre><code>Primary Engine
+      ↓
+ Valid setup
+      ↓
+    SMT
+   ┌─┼─┐
+   ↓ ↓ ↓
+   + 0 -</code></pre>
+
+**অর্থাৎ:**
+
+🟢 aligned SMT → quality boost
+
+🟣 no SMT → neutral
+
+🔴 contradictory SMT → downgrade/reject candidate
+
+**কিন্তু:**
+
+**SMT setup তৈরি করবে না।**
+
+**এটা validation layer।**
+
+---
+
+#### 8. Fractal Model-এর role পরিবর্তন
+
+Fractal Model-কে আলাদা signal engine বানানো আমি এখন recommend করছি না।
+
+বরং এর সবচেয়ে valuable contribution:
+
+> **HTF → LTF state propagation**
+
+**অর্থাৎ:**
+
+<pre><code>  4H liquidity event
+          ↓
+1H structural state
+          ↓
+30M execution state</code></pre>
+
+এই architecture-এ Fractal-এর concept ব্যবহার করা যেতে পারে, কিন্তু তার সব individual signal blindly copy করা হবে না।
+
+**Decision:**
+
+**Fractal = Architecture inspiration / MTF state framework**
+
+🟡 **MERGE**
+
+---
+
+#### 9. সবচেয়ে গুরুত্বপূর্ণ নতুন architecture
+
+এখন আমরা পুরো system-কে ৭টি layer-এ নামিয়ে আনতে পারি:
+
+<pre><code>┌───────────────────────────────┐
+│ LAYER 1 ── MACRO CONTEXT      │
+│         1W → 1D               │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 2 ── LIQUIDITY          │
+│         4H                    │
+│ Range / Sweep / Reclaim       │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 3 ── STRUCTURE          │
+│         1H                    │
+│ CISD / MSS / Displacement     │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 4 ── CROSS-MARKET       │
+│         XAU ↔ XAG             │
+│            SMT                │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 5 ── POI                │
+│ FVG / IFVG / Breaker /        │
+│ Unicorn                       │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 6 ── REGIME             │
+│ Session / News / Volatility   │
+└───────────────┬───────────────┘
+                │
+                ▼
+┌───────────────────────────────┐
+│ LAYER 7 ── EXECUTION          │
+│         30M                   │
+│ Entry / SL / TP / Mgmt        │
+└───────────────────────────────┘</code></pre>
+
+**এখন এটাই আমাদের Master Engine-এর architectural backbone হিসেবে সবচেয়ে শক্তিশালী candidate।**
+
+#### 10. একটি গুরুত্বপূর্ণ correction
+
+আগের architecture-এ আমরা কিছু জায়গায় SMT-কে confirmation-এর পরে রেখেছিলাম।
+
+এখন আমি সেটাকে fixed position হিসেবে lock করছি না।
+
+কারণ বাস্তবে SMT দুইভাবে test করা দরকার:
+
+**Model A**
+
+<pre><code>Sweep
+  ↓
+SMT
+  ↓
+CISD/MSS
+  ↓
+POI
+  ↓
+30M</code></pre>
+
+**Model B**
+
+<pre><code>Sweep
+  ↓
+CISD/MSS
+  ↓
+SMT
+  ↓
+POI
+  ↓
+30M</code></pre>
+
+**Backtest না হওয়া পর্যন্ত কোনটি superior তা বলা অতিরিক্ত confidence হবে।**
+
+---
+
+#### 11. Final Signal Architecture — এখনো coding নয়
+
+আমাদের engine ideally এমন হবে:
+
+<pre><code>             1W
+              │
+        Macro Context
+              │
+              ▼
+             1D
+      Directional Bias
+              │
+              ▼
+             4H
+      Liquidity / Range Event
+              │
+              ▼
+         Sweep/Reclaim
+              │
+              ▼
+      Setup Qualification
+              │
+              ▼
+             1H
+              │
+              ▼
+   CISD / MSS + Displacement
+              │
+              ▼
+        SMT Validation
+              │
+              ▼
+             POI
+     ┌────────┼────────┐
+     ↓        ↓        ↓
+    FVG      IFVG   Breaker
+              │
+           Unicorn
+              │
+              ▼
+        Regime Filter
+              │
+              ▼
+             30M
+              │
+              ▼
+           EXECUTE</code></pre>
+
+---
+
+#### 12. এখন আমাদের সবচেয়ে গুরুত্বপূর্ণ “Anti-Bias” Rule
+
+আমি চাই না final indicator:
+
+> **“১০টা concept আছে → ৮টা green → BUY”**
+
+এই ধরনের scoring machine হয়ে যাক।
+
+কারণ ১০টি concept-এর মধ্যে ৫টি যদি একই underlying event-এর derivative হয়, তাহলে ৮/১০ আসলে ৮টি independent evidence নয়।
+
+**তাই final engine হবে:**
+
+> **Evidence hierarchy, not indicator counting.**
+
+---
+
+#### 13. Decision Hierarchy
+
+আমি বর্তমানে এই hierarchy recommend করছি:
+
+##### Tier 1 — Must-have
+
+<pre><code>HTF Context
++
+Liquidity Event
++
+Valid Structural Confirmation</code></pre>
+
+##### Tier 2 — Quality
+
+<pre><code>SMT
++
+Displacement Quality
++
+POI Quality</code></pre>
+
+##### Tier 3 — Execution
+
+<pre><code>Session
++
+30M confirmation
++
+Risk/News regime</code></pre>
+
+##### Tier 4 — Optional enhancement
+
+<pre><code>CRT classification
+Turtle Soup classification
+Unicorn classification
+Inner Sweep
+Double Purge</code></pre>
+
+**এগুলো core logic-এর উপর বসবে; core logic replace করবে না।**
+
+---
+
+#### 14. KEEP / MERGE / MODIFY / TEST / DROP
+
+🟢 **KEEP — Core**
+
+* Liquidity
+* Liquidity Sweep
+* 1W/1D context
+* CISD
+* Displacement
+* FVG
+* IFVG
+* Breaker
+* SMT
+* Session/regime framework
+
+🟡 **MERGE**
+
+* CRT + C2
+* Fractal MTF logic
+* Unicorn with Breaker/FVG
+
+🟡 **MODIFY**
+
+* MSS
+* Turtle Soup
+* Kill Zone
+* News filter
+
+🟡 **TEST**
+
+* Inner Sweep
+* Double Purge
+* Day-of-week
+* 30M SMT
+* CISD vs MSS superiority
+* CRT vs Turtle Soup superiority
+
+🔴 **DROP FOR NOW**
+
+**আমি এখনো কোনো major concept permanently DROP করছি না।**
+
+কারণ source-based research থেকে “concept useless” বলা এবং backtest-এ “concept has no incremental edge” প্রমাণ করা এক জিনিস নয়।
