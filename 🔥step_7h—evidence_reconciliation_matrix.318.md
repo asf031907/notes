@@ -1668,3 +1668,713 @@ Double Purge</code></pre>
 **আমি এখনো কোনো major concept permanently DROP করছি না।**
 
 কারণ source-based research থেকে “concept useless” বলা এবং backtest-এ “concept has no incremental edge” প্রমাণ করা এক জিনিস নয়।
+
+### STEP 7I — SYSTEM SYNTHESIS
+
+#### 1. প্রথমে Master Engine-এর fundamental philosophy
+
+আমাদের engine-এর কাজ হবে না:
+
+> **“চার্টে যত বেশি ICT concept পাওয়া যায়, তত বেশি signal দেওয়া।”**
+
+বরং:
+
+> **Market context → liquidity event → structural confirmation → location → validation → execution**
+
+অর্থাৎ প্রতিটি layer-এর আলাদা দায়িত্ব থাকবে।
+
+---
+
+### 2. Complete Pipeline
+
+<pre><code>
+1W
+ │
+ │ Macro Structure
+ ▼
+1D
+ │
+ │ Directional Context
+ ▼
+4H
+ │
+ │ Liquidity / Range Event
+ ▼
+Sweep
+ │
+ │ Reclaim
+ ▼
+4H/1H Setup State
+ │
+ ▼
+1H
+ │
+ │ CISD / MSS + Displacement
+ ▼
+Structural Confirmation
+ │
+ ▼
+SMT
+ │
+ │ Cross-market validation
+ ▼
+POI
+ │
+ ├── FVG
+ ├── IFVG
+ ├── Breaker
+ └── Unicorn
+ │
+ ▼
+Regime
+ │
+ ├── Session
+ ├── Volatility
+ └── News Risk
+ │
+ ▼
+30M
+ │
+ │ Execution Confirmation
+ ▼
+ENTRY
+</code></pre>
+
+এখন প্রতিটি transition-এর Input → Condition → State → Output নির্ধারণ করি।
+
+---
+
+### 3. LAYER 1 — 1W MACRO CONTEXT
+
+**Input**
+
+* Weekly price structure
+* Major swing high/low
+* Current range position
+
+**উদ্দেশ্য**
+
+1W সরাসরি entry signal দেবে না।
+
+এর কাজ:
+
+> **Market-এর long-horizon structural environment নির্ধারণ করা।**
+
+**Output**
+
+<pre><code>WEEKLY_CONTEXT =
+    BULLISH
+    BEARISH
+    NEUTRAL</code></pre>
+
+**Important**
+
+**NEUTRAL = automatic short/long নয়।**
+
+এটা শুধু বলে:
+
+> **“Weekly structure থেকে clear directional advantage পাওয়া যাচ্ছে না।”**
+
+#### 4. LAYER 2 — 1D DIRECTIONAL CONTEXT
+
+1D হবে আমাদের swing-engine-এর প্রধান contextual layer।
+
+**Input**
+
+* Daily structure
+* Daily liquidity
+* Daily range position
+* 1W context
+
+**Output**
+
+<pre><code>DAILY_BIAS =
+    LONG
+    SHORT
+    NEUTRAL</code></pre>
+
+**Dependency**
+
+<pre><code>1W Context
+    ↓
+1D Interpretation</code></pre>
+
+কিন্তু 1W এবং 1D conflict হলে আমরা সরাসরি trade reject করব না।
+
+**বরং:**
+
+<pre><code>1W bullish
+1D bearish
+    ↓
+TRANSITION / COUNTERTREND STATE</code></pre>
+
+এটা আলাদা state হতে পারে।
+
+---
+
+#### 5. LAYER 3 — 4H LIQUIDITY ENGINE
+
+এটা Master Engine-এর প্রথম event-detection layer।
+
+**আমরা খুঁজব:**
+
+* External liquidity
+* Internal liquidity
+* Previous highs/lows
+* Range extremes
+* Relevant swing points
+* Potential liquidity pools
+
+**তারপর:**
+
+<pre><code>LIQUIDITY LEVEL
+       ↓
+ PRICE ATTACK
+       ↓
+    SWEEP?</code></pre>
+
+---
+
+#### 6. Sweep-এর definition
+
+শুধু wick level cross করলেই:
+
+> ❌ **“Valid Sweep”**
+
+বলব না।
+
+**আমাদের state model:**
+
+<pre><code>LEVEL IDENTIFIED
+       ↓
+ LEVEL ATTACKED
+       ↓
+ SWEEP DETECTED
+       ↓
+    RECLAIM?</code></pre>
+
+অর্থাৎ sweep এবং confirmation আলাদা।
+
+---
+
+#### 7. LAYER 4 — RECLAIM / CRT / C2
+
+এখানে CRT এবং C2-এর information আসবে।
+
+<pre><code>Sweep
+  ↓
+Close back / reclaim
+  ↓
+Reclaim confirmed</code></pre>
+
+এখানে আমরা:
+
+`RECLAIM_CONFIRMED = TRUE`
+
+করতে পারি।
+
+**কিন্তু:**
+
+> **Reclaim confirmed ≠ entry**
+
+এটা শুধু setup state এগিয়ে দেয়।
+
+---
+
+#### 8. Setup State Machine
+
+এখন আমাদের engine-এর সবচেয়ে গুরুত্বপূর্ণ engineering abstraction তৈরি হচ্ছে:
+
+<pre><code>STATE 0
+NO SETUP
+  ↓
+STATE 1
+CONTEXT VALID
+  ↓
+STATE 2
+LIQUIDITY IDENTIFIED
+  ↓
+STATE 3
+SWEEP DETECTED
+  ↓
+STATE 4
+RECLAIM CONFIRMED
+  ↓
+STATE 5
+STRUCTURAL SHIFT
+  ↓
+STATE 6
+POI IDENTIFIED
+  ↓
+STATE 7
+EXECUTION READY
+  ↓
+STATE 8
+ENTRY</code></pre>
+
+এটা আমাদের indicator-কে static pattern detector-এর বদলে **event-driven engine** বানাবে।
+
+---
+
+#### 9. LAYER 5 — 1H STRUCTURAL CONFIRMATION
+
+এখানে:
+
+**CISD**
+
+এবং
+
+**MSS**
+
+দুটো detector থাকবে।
+
+**কিন্তু এখনকার architecture:**
+
+<pre><code>       STRUCTURAL SHIFT
+               │
+        ┌──────┴──────┐
+       CISD          MSS
+        └──────┬──────┘
+               │
+               ▼
+          CONFIRMATION</code></pre>
+
+**Current rule**
+
+একটি valid confirmation-এর জন্য:
+
+<pre><code>CISD
+ OR
+MSS</code></pre>
+
+প্রথম version-এ `AND` নয়।
+
+---
+
+#### 10. Displacement এখানে কী করবে?
+
+CISD/MSS alone যথেষ্ট নাও হতে পারে।
+
+কারণ microscopic structural break noise হতে পারে।
+
+**তাই:**
+
+<pre><code>   Structural Shift
+          +
+Meaningful Displacement
+          ↓
+HIGHER QUALITY CONFIRMATION</code></pre>
+
+এখানে “meaningful”-এর exact mathematical definition এখনো lock করিনি।
+
+এটা পরের Rulebook-এর অন্যতম গুরুত্বপূর্ণ parameter হবে।
+
+#### 11. LAYER 6 — SMT
+
+এখন structural confirmation-এর পরে cross-market validation।
+
+<pre><code>XAUUSD
+  ↕
+XAGUSD</code></pre>
+
+**তিনটি state:**
+
+<pre><code>SMT = ALIGNED
+SMT = NEUTRAL
+SMT = CONTRADICTORY</code></pre>
+
+**Engine treatment:**
+
+<pre><code>ALIGNED
+  ↓
+Quality Boost
+
+NEUTRAL
+  ↓
+No Change
+
+CONTRADICTORY
+  ↓
+Quality Downgrade / Reject Candidate</code></pre>
+
+**কোন threshold-এ downgrade হবে—এখনো backtest-dependent।**
+
+---
+
+#### 12. LAYER 7 — POI ENGINE
+
+Structural confirmation-এর পরে আমরা location চাই।
+
+এখানে:
+
+<pre><code>FVG
+IFVG
+Breaker
+Unicorn</code></pre>
+
+থাকবে।
+
+কিন্তু সব একসঙ্গে mandatory নয়।
+
+---
+
+#### 13. POI hierarchy
+
+আমি provisional hierarchy এভাবে রাখছি:
+
+**Level 1 — Basic POI**
+
+<pre><code>FVG
+IFVG
+Breaker</code></pre>
+
+**Level 2 — Composite POI**
+
+<pre><code>Unicorn</code></pre>
+
+**অর্থাৎ:**
+
+> **Unicorn আলাদা fourth signal নয়।**
+
+এটা existing POI components-এর **higher-quality classification**।
+
+---
+
+#### 14. POI validity
+
+একটা FVG তৈরি হলেই:
+
+<pre><code>FVG = VALID ENTRY</code></pre>
+
+হবে না।
+
+আমাদের eventual POI state হবে:
+
+<pre><code>CREATED
+  ↓
+ACTIVE
+  ↓
+TESTED
+  ↓
+RESPECTED</code></pre>
+
+অথবা:
+
+<pre><code>CREATED
+  ↓
+INVALIDATED</code></pre>
+
+এখানে IFVG-এর concept বিশেষভাবে useful।
+
+---
+
+#### 15. LAYER 8 — REGIME ENGINE
+
+এখানে তিনটি প্রধান variable:
+
+<pre><code>SESSION
+VOLATILITY
+NEWS RISK</code></pre>
+
+**Session**
+
+তোমার preferred framework:
+
+<pre><code>Asia            19-22
+London          02-05
+NY              07-10
+London Close    10-12</code></pre>
+
+এগুলো আমরা configuration, not hardcoded truth হিসেবে রাখব।
+
+---
+
+#### 16. Session-এর role
+
+আমি final architecture-এ:
+
+<pre><code>SESSION = ENTRY PRIORITY</code></pre>
+
+রাখছি।
+
+না যে:
+
+<pre><code>SESSION = SETUP VALIDITY</code></pre>
+
+অর্থাৎ valid 4H/1H setup Kill Zone-এর বাইরে তৈরি হতে পারে।
+
+কিন্তু 30M execution-এর সময় preferred session থাকলে:
+
+> **execution quality score বাড়তে পারে।**
+
+---
+
+#### 17. Volatility Regime
+
+এখন তিনটি provisional state:
+
+<pre><code>NORMAL
+ELEVATED
+EXTREME</code></pre>
+
+**NORMAL**
+
+Normal execution conditions.
+
+**ELEVATED**
+
+Caution.
+
+**EXTREME**
+
+Potential trade block.
+
+বিশেষ করে XAUUSD-এর violent expansion-এর সময়।
+
+---
+
+#### 18. News Regime
+
+এখানেও:
+
+<pre><code>NORMAL
+CAUTION
+BLOCK</code></pre>
+
+কিন্তু এখানে Pine implementation feasibility পরে পরীক্ষা করতে হবে।
+
+আমরা এমন কোনো fake “news detector” বানাব না যা আসলে reliable economic calendar data পাচ্ছে না।
+
+#### 19. LAYER 9 — 30M EXECUTION
+
+এখন আমরা আসল execution timeframe-এ পৌঁছালাম।
+
+30M-এর কাজ:
+
+> **HTF/1H thesis-এর execution confirmation দেওয়া।**
+
+30M নতুন directional thesis তৈরি করবে না।
+
+---
+
+#### 20. 30M Entry Candidate
+
+Long example:
+
+<pre><code>1D Bias = Bullish
+  ↓
+4H Sell-side liquidity swept
+  ↓
+Reclaim confirmed
+  ↓
+1H CISD/MSS bullish
+  ↓
+POI identified
+  ↓
+SMT not contradictory
+  ↓
+30M execution condition
+  ↓
+ENTRY CANDIDATE</code></pre>
+
+এখানে এখনো trade নেওয়া হয়নি।
+
+এটা:
+
+`EXECUTION_CANDIDATE`
+
+---
+
+#### 21. Final Entry Gate
+
+শেষ gate:
+
+<pre><code>CONTEXT ✓
+LIQUIDITY ✓
+RECLAIM ✓
+STRUCTURE ✓
+POI ✓
+SMT ✓/neutral
+REGIME ✓
+30M EXECUTION ✓
+  ↓
+ENTRY</code></pre>
+
+যদি কোনো mandatory condition fail করে:
+
+<pre><code>NO ENTRY</code></pre>
+
+টাই আমাদের anti-overtrading architecture।
+
+---
+
+#### 22. Short-side mirror
+
+Short-এর জন্য পুরো system mirror হবে:
+
+<pre><code>1D Bearish
+  ↓
+4H Buy-side sweep
+  ↓
+Reclaim
+  ↓
+1H bearish CISD/MSS
+  ↓
+Bearish displacement
+  ↓
+Bearish POI
+  ↓
+SMT aligned/neutral
+  ↓
+30M execution
+  ↓
+SHORT</code></pre>
+
+---
+
+#### 23. এখন সবচেয়ে গুরুত্বপূর্ণ: INVALIDATION
+
+Professional engine-এর জন্য entry condition-এর মতো invalidation equally important।
+
+আমাদের state machine-এ প্রতিটি setup-এর:
+
+<pre><code>ACTIVE
+INVALIDATED
+EXPIRED
+TRIGGERED</code></pre>
+
+state থাকবে।
+
+**উদাহরণ**
+
+<pre><code>Sweep detected
+  ↓
+Reclaim
+  ↓
+Wait for confirmation
+  ↓
+Price invalidates sweep structure
+  ↓
+SETUP = INVALID</code></pre>
+
+পুরনো signal chart-এ পড়ে থাকবে না।
+
+---
+
+#### 24. Setup Expiry
+
+আরেকটি critical rule:
+
+> **Setup forever valid থাকবে না।**
+
+**উদাহরণ:**
+
+<pre><code>Sweep
+  ↓
+Reclaim
+  ↓
+No structural confirmation
+  ↓
+X candles pass
+  ↓
+EXPIRED</code></pre>
+
+Exact candle expiry এখন parameter হিসেবে রাখব।
+
+---
+
+#### 25. এখন আমরা একটি “Master Signal” কী তা define করতে পারি
+
+একটি signal তখনই তৈরি হবে যখন:
+
+<pre><code>HTF Context
++
+Liquidity Event
++
+Structural Confirmation
++
+Valid POI
++
+Execution Condition</code></pre>
+
+এগুলো satisfy করে।
+
+SMT/session/news:
+
+**quality/risk modifiers।**
+
+এটা গুরুত্বপূর্ণ কারণ signal এবং confidence একই জিনিস নয়।
+
+---
+
+#### 26. Signal ≠ Score
+
+আমি final indicator-এ এই ভুলটা করতে চাই না:
+
+<pre><code>CISD +1
+MSS +1
+FVG +1
+IFVG +1
+Breaker +1
+Unicorn +1
+SMT +1
+CRT +1</code></pre>
+
+তারপর:
+
+> **7/8 = BUY**
+
+এটা conceptually দুর্বল।
+
+কারণ:
+
+**Unicorn already contains FVG + Breaker.**
+
+এবং CRT/C2/Sweep-ও related।
+
+---
+
+#### 27. বরং আমরা দুইটি output তৈরি করব
+
+**A. Directional State**
+
+<pre><code>LONG
+SHORT
+NEUTRAL</code></pre>
+
+**B. Setup Quality**
+
+<pre><code>A+
+A
+B
+C
+INVALID</code></pre>
+
+এগুলো আলাদা।
+
+---
+
+#### 29. এই architecture-এর সবচেয়ে বড় advantage
+
+এতে indicator তিনটি আলাদা প্রশ্নের উত্তর দেবে:
+
+**Question 1**
+
+**Where are we?**
+
+→ 1W / 1D
+
+**Question 2**
+
+**What happened?**
+
+→ Liquidity / Sweep / Reclaim / Structure
+
+**Question 3**
+
+**Can I execute?**
+
+→ POI / SMT / Regime / 30M
+
+**এই separation-টাই আমাদের system-এর backbone।**
+
