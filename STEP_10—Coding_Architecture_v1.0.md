@@ -649,6 +649,8 @@ Claude-কে আমরা বলব:
 | 9 | Performance-এর জন্য unnecessary loops avoid করবে। |
 | 10 | প্রতিটি module independently testable রাখতে হবে। |
 
+---
+
 ## 10.28 Claude-কে দেওয়ার MASTER CODING PROMPT
 
 **এখন থেকে এটাই coding handoff document-এর foundation:**
