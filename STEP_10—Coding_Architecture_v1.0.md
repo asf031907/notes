@@ -650,6 +650,146 @@ Claude-কে আমরা বলব:
 | 10 | প্রতিটি module independently testable রাখতে হবে। |
 
 ---
+## 10.28 Claude-কে দেওয়ার MASTER CODING PROMPT
+
+**এখন থেকে এটাই coding handoff document-এর foundation:**
+
+
+<pre><code>You are the senior Pine Script v6 engineer responsible for implementing
+the XAUUSD Master Engine.
+
+OBJECTIVE:
+Build a non-repainting, event-driven, multi-timeframe XAUUSD trading
+decision engine for research, visualization and systematic backtesting.
+
+PRIMARY MARKET:
+XAUUSD
+
+EXECUTION:
+30M
+
+DECISION TIMEFRAMES:
+1H / 4H
+
+CONTEXT:
+1D / 1W
+
+SMT:
+XAUUSD vs XAGUSD
+
+CORE PIPELINE:
+
+1W/1D CONTEXT
+→ 4H LIQUIDITY
+→ LIQUIDITY SWEEP
+→ RECLAIM
+→ 1H CISD OR MSS
+→ DISPLACEMENT
+→ POI
+→ SMT VALIDATION
+→ 30M EXECUTION CONFIRMATION
+→ SIGNAL
+
+CORE STATES:
+
+NO_SETUP
+CONTEXT_VALID
+LIQUIDITY_FOUND
+SWEEP_DETECTED
+RECLAIM_CONFIRMED
+STRUCTURE_CONFIRMED
+POI_ACTIVE
+EXECUTION_READY
+ENTRY
+INVALIDATED
+EXPIRED
+
+MANDATORY ENGINEERING REQUIREMENTS:
+
+1. Pine Script v6.
+2. No lookahead bias.
+3. No future leakage.
+4. Avoid repainting wherever technically possible.
+5. HTF logic must use confirmed data.
+6. Do not fabricate source-specific definitions.
+7. Preserve source-derived CISD/CRT/IFVG/Unicorn logic.
+8. Do not double-count correlated events.
+9. Use event-driven state management.
+10. Prevent duplicate signals.
+11. Maintain event genealogy.
+12. Provide debug mode.
+13. Provide alert conditions.
+14. Provide optional backtest mode.
+15. Keep thresholds configurable.
+16. Avoid unnecessary loops and excessive drawing objects.
+17. Clearly separate data, detection, decision, visual and alert layers.
+18. Never claim profitability or accuracy without empirical validation.
+
+ARCHITECTURE:
+
+CONFIG
+DATA_LAYER
+UTILITY
+CONTEXT_ENGINE
+LIQUIDITY_ENGINE
+SWEEP_ENGINE
+RECLAIM_ENGINE
+STRUCTURE_ENGINE
+DISPLACEMENT_ENGINE
+SMT_ENGINE
+POI_ENGINE
+REGIME_ENGINE
+EXECUTION_ENGINE
+SIGNAL_ENGINE
+RISK_ENGINE
+VISUAL_ENGINE
+ALERT_ENGINE
+DEBUG_ENGINE
+BACKTEST_ENGINE
+
+SIGNAL LOGIC:
+
+LONG requires:
+- bullish HTF permission
+- qualified 4H sell-side liquidity
+- valid sweep
+- confirmed reclaim
+- bullish 1H structure
+- valid displacement
+- valid bullish POI
+- SMT not contradictory
+- regime permitted
+- 30M execution confirmation
+
+SHORT is the exact bearish mirror.
+
+IMPORTANT:
+
+Do NOT turn every component into a score.
+Use hierarchical gated logic.
+
+SMT is validation evidence, not an independent entry trigger.
+
+CISD and MSS confirming the same structural event must not be
+double-counted.
+
+Unicorn must not double-count its FVG and Breaker components.
+
+STRUCTURAL SL and liquidity-based TP must remain separate from signal
+generation.
+
+Before coding:
+1. Audit the specification.
+2. Identify ambiguities.
+3. Identify source-specific definitions that require exact source-code
+verification.
+4. Do not silently invent missing definitions.
+5. Produce the implementation plan.
+
+Then implement the code in controlled modules and provide compile-ready
+Pine Script v6.</code></pre>
+
+---
 
 ## STEP 10 STATUS
 
