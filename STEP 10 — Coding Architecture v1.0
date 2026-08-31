@@ -1,0 +1,422 @@
+এই ধাপের উদ্দেশ্য হলো এক লাইনে Pine code লেখার আগে পুরো engine-টাকে software হিসেবে কীভাবে build করব সেটা lock করা। এরপর Claude-কে coding দেওয়া হবে।
+
+# STEP 10 — Coding Architecture v1.0
+
+## 10.1 Build strategy: একবারে 2,000+ line code নয়
+
+এখানে একটা blind spot আছে: সরাসরি পুরো Master Engine Claude-কে দিলে Claude সাধারণত দ্রুত code লিখে ফেলবে, কিন্তু পরে repaint, MTF synchronization, state reset, object overflow এবং source-logic drift debug করা কঠিন হবে।
+
+তাই আমরা modular build + integration করব:
+
+| Build | Module | উদ্দেশ্য |
+|---|---|---|
+| 1 | Core + Data Layer | MTF data safely আনা |
+| 2 | Context Engine | 1W/1D bias |
+| 3 | Liquidity Engine | HTF liquidity |
+| 4 | Sweep + Reclaim | event detection |
+| 5 | CISD/MSS | structure |
+| 6 | Displacement | normalized strength |
+| 7 | FVG/IFVG/Breaker/Unicorn | POI |
+| 8 | SMT | XAU ↔ XAG |
+| 9 | Regime | session/volatility |
+| 10 | 30M Execution | final trigger |
+| 11 | Signal + Alerts | output |
+| 12 | Visual + Debug | chart interface |
+| 13 | Backtest Harness | validation |
+
+কিন্তু এগুলো 13টি আলাদা STEP নয়। এগুলো STEP 10-এর coding architecture-এর internal build order!
+
+---
+
+## 10.2 File architecture
+
+Pine Script-এর limitation-এর কারণে আমরা প্রথমে conceptual modules আলাদা রাখব, কিন্তু final TradingView indicator একটি single `.pine` script হবে।
+
+Structure:
+
+```
+MASTER_ENGINE.pine
+
+// 01 CONFIG
+// 02 DATA LAYER
+// 03 UTILITY FUNCTIONS
+// 04 CONTEXT ENGINE
+// 05 LIQUIDITY ENGINE
+// 06 SWEEP ENGINE
+// 07 RECLAIM ENGINE
+// 08 STRUCTURE ENGINE
+// 09 DISPLACEMENT ENGINE
+// 10 SMT ENGINE
+// 11 POI ENGINE
+// 12 REGIME ENGINE
+// 13 EXECUTION ENGINE
+// 14 SIGNAL ENGINE
+// 15 RISK ENGINE
+// 16 VISUAL ENGINE
+// 17 ALERT ENGINE
+// 18 DEBUG ENGINE
+// 19 BACKTEST ENGINE
+```
+
+এতে পরে কোনো bug হলে আমরা জানব bug কোন subsystem-এ।
+
+---
+
+## 10.3 Input architecture
+
+User-facing inputs অতিরিক্ত হবে না।
+
+### Core
+```
+Enable Master Engine
+Execution TF
+Context TF
+```
+
+### Detection
+```
+Swing Sensitivity
+Liquidity Sensitivity
+Displacement Threshold
+POI Lifetime
+Setup Expiry
+```
+
+### SMT
+```
+Enable SMT
+SMT Symbol
+SMT Matching Window
+```
+
+### Regime
+```
+Session Filter
+Volatility Filter
+News Block
+```
+
+### Execution
+```
+Execution Confirmation
+Minimum Quality
+```
+
+### Risk
+```
+Risk %
+SL Buffer
+TP Mode
+```
+
+### Visual
+```
+Show Context
+Show Liquidity
+Show POI
+Show SMT
+Show Signals
+Debug Mode
+```
+
+---
+
+## 10.4 Data Layer
+
+এটা engine-এর foundation।
+
+Default:
+```
+Chart = 30M
+```
+
+তারপর:
+```
+request.security()
+```
+
+এর মাধ্যমে:
+```
+1H
+4H
+1D
+1W
+```
+
+এবং SMT-এর জন্য:
+```
+XAGUSD
+```
+
+data আসবে।
+
+TradingView-এর official documentation অনুযায়ী HTF request-এর ক্ষেত্রে confirmed values ব্যবহার করতে হবে যাতে historical বনাম realtime behaviour mismatch এবং lookahead bias এড়ানো যায়।
+
+Hard rule:
+```
+NO LOOKAHEAD
+NO FUTURE LEAK
+NO UNCONFIRMED HTF SIGNAL
+```
+
+---
+
+## 10.5 Context Engine
+
+Input:
+```
+1W
+1D
+```
+
+Output:
+```
+BULLISH
+BEARISH
+NEUTRAL
+TRANSITION
+```
+
+এখানে context শুধু permission layer।
+
+এটি সরাসরি entry তৈরি করবে না।
+
+```
+Context
+ ↓
+Permission
+```
+
+not:
+
+```
+Context
+ ↓
+BUY
+```
+
+---
+
+## 10.6 Liquidity Engine
+
+এটি active liquidity objects maintain করবে।
+
+প্রতিটি level-এর internal state:
+```
+type
+price
+timeframe
+strength
+createdTime
+status
+```
+
+Status:
+```
+ACTIVE
+SWEPT
+CONSUMED
+EXPIRED
+```
+
+---
+
+## 10.7 Sweep Engine
+
+Liquidity Engine বলে:
+> "এই level আছে।"
+
+Sweep Engine বলে:
+> "Price এই level-কে raid করেছে।"
+
+এ দুটো আলাদা রাখা হচ্ছে।
+
+```
+LIQUIDITY
+ ↓
+SWEEP
+```
+
+---
+
+## 10.8 Reclaim Engine
+
+Sweep হওয়ার পর:
+```
+WAIT_RECLAIM
+```
+
+তারপর:
+```
+RECLAIM_CONFIRMED
+```
+
+অথবা:
+```
+FAILED
+```
+
+### Critical
+
+Sweep এবং reclaim একই candle-এ হলে source definition অনুযায়ী handling আলাদা হতে পারে।
+
+তাই coding-এর আগে source-specific rules যেখানে ambiguous, Claude নিজে assumption করবে না।
+
+---
+
+## 10.9 Structure Engine
+
+এখানে:
+```
+CISD
+MSS
+```
+থাকবে।
+
+Output:
+```
+BULLISH_STRUCTURE
+BEARISH_STRUCTURE
+NONE
+```
+
+### Important
+
+CISD/MSS দুইটা signal যোগ করে:
+```
++2
+```
+করা হবে না।
+
+বরং:
+```
+CISD
+  OR
+MSS
+  ↓
+STRUCTURE_CONFIRMED
+```
+
+---
+
+## 10.10 Displacement Engine
+
+Displacement:
+```
+price movement
+÷
+volatility baseline
+```
+দিয়ে normalize হবে।
+
+Output:
+```
+WEAK
+VALID
+STRONG
+```
+
+এখানে threshold input থাকবে।
+
+এখনই threshold optimize করা হবে না।
+
+কারণ সেটা backtest-এর কাজ।
+
+---
+
+## 10.11 POI Engine
+
+একই engine-এর মধ্যে:
+```
+FVG
+IFVG
+Breaker
+Unicorn
+Turtle Soup
+```
+থাকবে।
+
+কিন্তু hierarchy থাকবে:
+```
+EVENT
+ ↓
+POI
+```
+
+এবং duplicate counting বন্ধ থাকবে।
+
+---
+
+## 10.12 SMT Engine
+
+Default pair:
+```
+XAUUSD
+XAGUSD
+```
+
+Output:
+```
+ALIGNED
+NEUTRAL
+CONTRADICTORY
+```
+
+SMT-এর role:
+```
+Evidence
+```
+
+not:
+```
+Trigger
+```
+
+Hard rule
+
+SMT absent:
+```
+NOT AUTOMATICALLY BLOCKED
+```
+
+SMT contradictory:
+```
+QUALITY DOWN / POSSIBLE BLOCK
+```
+
+---
+
+## 10.13 Regime Engine
+
+দুটি independent dimensions:
+```
+SESSION
++
+VOLATILITY
+```
+
+Session:
+```
+ASIA
+LONDON
+NY
+LONDON_CLOSE
+OFF_SESSION
+```
+
+Volatility:
+```
+NORMAL
+ELEVATED
+EXTREME
+```
+
+তারপর:
+```
+REGIME_ALLOWED
+```
+
+বা:
+```
+REGIME_BLOCKED
+```
