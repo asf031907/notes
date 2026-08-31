@@ -34,8 +34,7 @@ Pine Script-এর limitation-এর কারণে আমরা প্রথ�
 
 Structure:
 
-```
-MASTER_ENGINE.pine
+<pre><code>MASTER_ENGINE.pine
 
 // 01 CONFIG
 // 02 DATA LAYER
@@ -56,7 +55,7 @@ MASTER_ENGINE.pine
 // 17 ALERT ENGINE
 // 18 DEBUG ENGINE
 // 19 BACKTEST ENGINE
-```
+</code></pre>
 
 এতে পরে কোনো bug হলে আমরা জানব bug কোন subsystem-এ।
 
@@ -67,57 +66,50 @@ MASTER_ENGINE.pine
 User-facing inputs অতিরিক্ত হবে না।
 
 ### Core
-```
-Enable Master Engine
+<pre><code>Enable Master Engine
 Execution TF
 Context TF
-```
+</code></pre>
 
 ### Detection
-```
-Swing Sensitivity
+<pre><code>Swing Sensitivity
 Liquidity Sensitivity
 Displacement Threshold
 POI Lifetime
 Setup Expiry
-```
+</code></pre>
 
 ### SMT
-```
-Enable SMT
+<pre><code>Enable SMT
 SMT Symbol
 SMT Matching Window
-```
+</code></pre>
 
 ### Regime
-```
-Session Filter
+<pre><code>Session Filter
 Volatility Filter
 News Block
-```
+</code></pre>
 
 ### Execution
-```
-Execution Confirmation
+<pre><code>Execution Confirmation
 Minimum Quality
-```
+</code></pre>
 
 ### Risk
-```
-Risk %
+<pre><code>Risk %
 SL Buffer
 TP Mode
-```
+</code></pre>
 
 ### Visual
-```
-Show Context
+<pre><code>Show Context
 Show Liquidity
 Show POI
 Show SMT
 Show Signals
 Debug Mode
-```
+</code></pre>
 
 ---
 
@@ -126,74 +118,65 @@ Debug Mode
 এটা engine-এর foundation।
 
 Default:
-```
-Chart = 30M
-```
+<pre><code>Chart = 30M
+</code></pre>
 
 তারপর:
-```
-request.security()
-```
+<pre><code>request.security()
+</code></pre>
 
 এর মাধ্যমে:
-```
-1H
+<pre><code>1H
 4H
 1D
 1W
-```
+</code></pre>
 
 এবং SMT-এর জন্য:
-```
-XAGUSD
-```
+<pre><code>XAGUSD
+</code></pre>
 
 data আসবে।
 
 TradingView-এর official documentation অনুযায়ী HTF request-এর ক্ষেত্রে confirmed values ব্যবহার করতে হবে যাতে historical বনাম realtime behaviour mismatch এবং lookahead bias এড়ানো যায়।
 
 Hard rule:
-```
-NO LOOKAHEAD
+<pre><code>NO LOOKAHEAD
 NO FUTURE LEAK
 NO UNCONFIRMED HTF SIGNAL
-```
+</code></pre>
 
 ---
 
 ## 10.5 Context Engine
 
 Input:
-```
-1W
+<pre><code>1W
 1D
-```
+</code></pre>
 
 Output:
-```
-BULLISH
+<pre><code>BULLISH
 BEARISH
 NEUTRAL
 TRANSITION
-```
+</code></pre>
 
 এখানে context শুধু permission layer।
 
 এটি সরাসরি entry তৈরি করবে না।
 
-```
-Context
+<pre><code>Context
  ↓
 Permission
-```
+</code></pre>
 
 not:
 
-```
-Context
+<pre><code>Context
  ↓
 BUY
-```
+</code></pre>
 
 ---
 
@@ -202,22 +185,20 @@ BUY
 এটি active liquidity objects maintain করবে।
 
 প্রতিটি level-এর internal state:
-```
-type
+<pre><code>type
 price
 timeframe
 strength
 createdTime
 status
-```
+</code></pre>
 
 Status:
-```
-ACTIVE
+<pre><code>ACTIVE
 SWEPT
 CONSUMED
 EXPIRED
-```
+</code></pre>
 
 ---
 
@@ -231,30 +212,26 @@ Sweep Engine বলে:
 
 এ দুটো আলাদা রাখা হচ্ছে।
 
-```
-LIQUIDITY
+<pre><code>LIQUIDITY
  ↓
 SWEEP
-```
+</code></pre>
 
 ---
 
 ## 10.8 Reclaim Engine
 
 Sweep হওয়ার পর:
-```
-WAIT_RECLAIM
-```
+<pre><code>WAIT_RECLAIM
+</code></pre>
 
 তারপর:
-```
-RECLAIM_CONFIRMED
-```
+<pre><code>RECLAIM_CONFIRMED
+</code></pre>
 
 অথবা:
-```
-FAILED
-```
+<pre><code>FAILED
+</code></pre>
 
 ### Critical
 
@@ -267,54 +244,48 @@ Sweep এবং reclaim একই candle-এ হলে source definition অন�
 ## 10.9 Structure Engine
 
 এখানে:
-```
-CISD
+<pre><code>CISD
 MSS
-```
+</code></pre>
 থাকবে।
 
 Output:
-```
-BULLISH_STRUCTURE
+<pre><code>BULLISH_STRUCTURE
 BEARISH_STRUCTURE
 NONE
-```
+</code></pre>
 
 ### Important
 
 CISD/MSS দুইটা signal যোগ করে:
-```
-+2
-```
+<pre><code>+2
+</code></pre>
 করা হবে না।
 
 বরং:
-```
-CISD
+<pre><code>CISD
   OR
 MSS
   ↓
 STRUCTURE_CONFIRMED
-```
+</code></pre>
 
 ---
 
 ## 10.10 Displacement Engine
 
 Displacement:
-```
-price movement
+<pre><code>price movement
 ÷
 volatility baseline
-```
+</code></pre>
 দিয়ে normalize হবে।
 
 Output:
-```
-WEAK
+<pre><code>WEAK
 VALID
 STRONG
-```
+</code></pre>
 
 এখানে threshold input থাকবে।
 
@@ -327,21 +298,19 @@ STRONG
 ## 10.11 POI Engine
 
 একই engine-এর মধ্যে:
-```
-FVG
+<pre><code>FVG
 IFVG
 Breaker
 Unicorn
 Turtle Soup
-```
+</code></pre>
 থাকবে।
 
 কিন্তু hierarchy থাকবে:
-```
-EVENT
+<pre><code>EVENT
  ↓
 POI
-```
+</code></pre>
 
 এবং duplicate counting বন্ধ থাকবে।
 
@@ -350,73 +319,62 @@ POI
 ## 10.12 SMT Engine
 
 Default pair:
-```
-XAUUSD
+<pre><code>XAUUSD
 XAGUSD
-```
+</code></pre>
 
 Output:
-```
-ALIGNED
+<pre><code>ALIGNED
 NEUTRAL
 CONTRADICTORY
-```
+</code></pre>
 
 SMT-এর role:
-```
-Evidence
-```
+<pre><code>Evidence
+</code></pre>
 
 not:
-```
-Trigger
-```
+<pre><code>Trigger
+</code></pre>
 
 Hard rule
 
 SMT absent:
-```
-NOT AUTOMATICALLY BLOCKED
-```
+<pre><code>NOT AUTOMATICALLY BLOCKED
+</code></pre>
 
 SMT contradictory:
-```
-QUALITY DOWN / POSSIBLE BLOCK
-```
+<pre><code>QUALITY DOWN / POSSIBLE BLOCK
+</code></pre>
 
 ---
 
 ## 10.13 Regime Engine
 
 দুটি independent dimensions:
-```
-SESSION
+<pre><code>SESSION
 +
 VOLATILITY
-```
+</code></pre>
 
 Session:
-```
-ASIA
+<pre><code>ASIA
 LONDON
 NY
 LONDON_CLOSE
 OFF_SESSION
-```
+</code></pre>
 
 Volatility:
-```
-NORMAL
+<pre><code>NORMAL
 ELEVATED
 EXTREME
-```
+</code></pre>
 
 তারপর:
-```
-REGIME_ALLOWED
-```
+<pre><code>REGIME_ALLOWED
+</code></pre>
 
 বা:
-```
-REGIME_BLOCKED
-```
+<pre><code>REGIME_BLOCKED
+</code></pre>
