@@ -2378,3 +2378,1029 @@ INVALID</code></pre>
 
 **এই separation-টাই আমাদের system-এর backbone।**
 
+#### STEP 7J — XAUUSD MASTER ENGINE
+
+#### MASTER ENGINE RULEBOOK v1.0
+
+**System Objective**
+
+**Primary Market:** XAUUSD  
+**Execution TF:** 30M  
+**Decision TF:** 1H / 4H  
+**Context TF:** 1D / 1W  
+**Secondary Market:** XAGUSD for SMT  
+**Primary objective:** Swing-context থেকে high-quality 30M execution candidate তৈরি করা।
+
+---
+
+#### 1. SYSTEM ARCHITECTURE
+
+<pre><code>                ┌───────────────┐
+                │      1W       │
+                │ Macro Context │
+                └───────┬───────┘
+                        ↓
+                ┌───────────────┐
+                │      1D       │
+                │ Daily Context │
+                └───────┬───────┘
+                        ↓
+                ┌───────────────┐
+                │      4H       │
+                │ Liquidity     │
+                │ + Range Event │
+                └───────┬───────┘
+                        ↓
+                 SWEEP / RECLAIM
+                        ↓
+                ┌───────────────┐
+                │      1H       │
+                │ CISD / MSS    │
+                │ Displacement  │
+                └───────┬───────┘
+                        ↓
+                       SMT
+                        ↓
+                ┌───────────────┐
+                │     POI       │
+                │ FVG / IFVG    │
+                │ Breaker       │
+                │ Unicorn       │
+                └───────┬───────┘
+                        ↓
+                REGIME FILTER
+                        ↓
+                ┌───────────────┐
+                │      30M      │
+                │  Execution    │
+                └───────┬───────┘
+                        ↓
+                      ENTRY</code></pre>
+
+#### 2. STATE MACHINE
+
+এটাই Pine implementation-এর backbone হবে।
+
+<pre><code>S0 = NO_SETUP
+  ↓
+S1 = CONTEXT_VALID
+  ↓
+S2 = LIQUIDITY_IDENTIFIED
+  ↓
+S3 = SWEEP_DETECTED
+  ↓
+S4 = RECLAIM_CONFIRMED
+  ↓
+S5 = STRUCTURE_CONFIRMED
+  ↓
+S6 = POI_ACTIVE
+  ↓
+S7 = EXECUTION_READY
+  ↓
+S8 = ENTRY_TRIGGERED</code></pre>
+
+এবং যেকোনো সময়:
+
+<pre><code>INVALIDATED
+EXPIRED</code></pre>
+
+state-এ যেতে পারবে।
+
+**অত্যন্ত গুরুত্বপূর্ণ:**
+
+একটি candle-এ পুরো chain complete হয়ে গেলেও engine-কে historical hindsight দিয়ে সব state একসঙ্গে দেখানো যাবে না।
+
+প্রতিটি state sequentially confirm করতে হবে।
+
+এটা repaint prevention-এর জন্য fundamental।
+
+---
+
+#### 3. RULE GROUP — CTX
+
+**CTX-01 — Weekly Context**
+
+**TF:** 1W  
+**Output:**
+
+<pre><code>W_BULLISH
+W_BEARISH
+W_NEUTRAL</code></pre>
+
+**Role**
+
+Macro context only.
+
+❌ **Entry trigger নয়।**
+
+---
+
+**CTX-02 — Daily Context**
+
+**TF:** 1D  
+**Output:**
+
+<pre><code>D_BULLISH
+D_BEARISH
+D_NEUTRAL</code></pre>
+
+**1W-এর সঙ্গে relationship:**
+
+<pre><code>1W Bullish + 1D Bullish
+→ aligned
+
+1W Bullish + 1D Bearish
+→ transition/countertrend
+
+1W Bearish + 1D Bearish
+→ aligned
+
+1W Bearish + 1D Bullish
+→ transition/countertrend</code></pre>
+
+**Professional decision:**
+
+1W/1D conflict = automatic no-trade নয়।
+
+কিন্তু setup quality downgrade candidate।
+
+---
+
+#### 4. RULE GROUP — LIQ
+
+**LIQ-01 — Qualified Liquidity**
+
+4H/1H-এ relevant liquidity level identify করতে হবে।
+
+**Candidate:**
+
+<pre><code>Previous Swing High
+Previous Swing Low
+External Range High
+External Range Low
+Relevant Internal Liquidity</code></pre>
+
+**কিন্তু:**
+
+প্রতিটি minor pivot liquidity হিসেবে ব্যবহার করা যাবে না।
+
+এখানে swing qualification algorithm প্রয়োজন হবে।
+
+Exact algorithm v1.0-এর পরের engineering specification-এ নির্ধারণ করব।
+
+---
+
+#### 5. LIQ-02 — Sweep Detection
+
+<pre><code>Qualified Liquidity
+  ↓
+Price breaches level
+  ↓
+SWEEP_DETECTED</code></pre>
+
+**কিন্তু:**
+
+> **Sweep alone = signal নয়।**
+
+#### 6. LIQ-03 — Sweep Direction
+
+**Sell-side liquidity swept:**
+
+<pre><code>Low breached
+→ potential bullish reversal</code></pre>
+
+**Buy-side liquidity swept:**
+
+<pre><code>High breached
+→ potential bearish reversal</code></pre>
+
+এগুলো candidate directional hypothesis।
+
+Final direction নয়।
+
+---
+
+#### 7. LIQ-04 — Sweep Failure
+
+যদি expected reclaim না আসে এবং price sweep direction-এ continue করে:
+
+<pre><code>SWEEP
+  ↓
+NO_RECLAIM
+  ↓
+CONTINUATION_RISK</code></pre>
+
+Setup candidate বাতিল হতে পারে।
+
+---
+
+#### 8. RULE GROUP — RECLAIM
+
+**REC-01**
+
+Sweep-এর পরে price relevant level/range-এর ভেতরে close-back করলে:
+
+<pre><code>RECLAIM_CONFIRMED = TRUE</code></pre>
+
+এটাই CRT/C2 family-এর event-state layer।
+
+**গুরুত্বপূর্ণ:**
+
+<pre><code>RECLAIM ≠ ENTRY</code></pre>
+
+---
+
+#### 9. REC-02 — CRT
+
+CRT-কে standalone signal হিসেবে score করব না।
+
+এর role:
+
+> **Range + sweep + reclaim framework**
+
+অর্থাৎ:
+
+<pre><code>CRT_VALID</code></pre>
+
+একটি contextual classification হতে পারে।
+
+---
+
+#### 10. REC-03 — C2
+
+C2-কে:
+
+> **Reclaim state**
+
+হিসেবে treat করব।
+
+তাই:
+
+<pre><code>CRT ✓
+C2 ✓</code></pre>
+
+মানে দুই independent confirmations নয়।
+
+---
+
+#### 11. RULE GROUP — STRUCTURE
+
+**STR-01 — Structural Confirmation**
+
+1H-এ:
+
+<pre><code>CISD OR MSS</code></pre>
+
+এর মাধ্যমে structural shift detect হবে।
+
+**v1.0 principle:**
+
+<pre><code>CISD = Detector A
+MSS  = Detector B</code></pre>
+
+দুটো একসঙ্গে mandatory নয়।
+
+---
+
+#### 12. STR-02 — CISD
+
+CISD source implementation-এর terminology/logic preserve করা হবে।
+
+এখানে গুরুত্বপূর্ণ:
+
+**আমরা source-এর CISD logic rewrite করে generic BOS/MSS বানাব না।**
+
+Pine implementation-এর সময় source code থেকে exact mechanics preserve/translate করতে হবে।
+
+---
+
+#### 13. STR-03 — MSS
+
+MSS structural-shift detector হিসেবে থাকবে।
+
+কিন্তু:
+
+<pre><code>MSS ≠ automatic entry</code></pre>
+
+বরং:
+
+<pre><code>MSS
++
+Displacement</code></pre>
+
+একটি stronger structural confirmation candidate।
+
+---
+
+#### 14. STR-04 — CISD + MSS
+
+**Initial implementation:**
+
+<pre><code>CISD OR MSS</code></pre>
+
+**Advanced testing:**
+
+<pre><code>CISD only
+MSS only
+CISD + MSS</code></pre>
+
+Backtest determine করবে কোন configuration robust।
+
+---
+
+#### 15. STR-05 — Displacement
+
+Displacement-এর উদ্দেশ্য:
+
+> **Minor/noisy structure break এবং meaningful directional delivery আলাদা করা।**
+
+তাই:
+
+<pre><code>Structure Shift
++
+Meaningful Displacement
+  ↓
+Higher-quality confirmation</code></pre>
+
+**Exact displacement threshold:**
+
+**NOT LOCKED YET.**
+
+কারণ fixed candle size XAUUSD-এর different volatility regime-এ দুর্বল হতে পারে।
+
+---
+
+#### 16. RULE GROUP — SMT
+
+**SMT-01**
+
+**Secondary market:**  
+XAGUSD
+
+**Primary:**  
+XAUUSD
+
+SMT detect করবে:
+
+<pre><code>XAU extreme
+vs
+XAG confirmation/failure</code></pre>
+
+---
+
+#### 17. SMT-02 — Three-State Model
+
+<pre><code>SMT_ALIGNED
+SMT_NEUTRAL
+SMT_CONTRADICTORY</code></pre>
+
+**ALIGNED**
+
+Setup direction-এর সঙ্গে SMT supportive।
+
+**NEUTRAL**
+
+Meaningful SMT নেই।
+
+**CONTRADICTORY**
+
+Cross-market behaviour setup-এর বিপরীত।
+
+## 18. SMT-03 — SMT Treatment
+
+❌ Mandatory নয়
+
+```
+No SMT
+≠
+No Trade
+```
+
+🟢 **Aligned**
+
+Quality enhancement।
+
+⚪ **Neutral**
+
+No modification।
+
+🔴 **Contradictory**
+
+Quality downgrade / possible rejection।
+
+---
+
+## 19. SMT-04 — Timeframes
+
+Initial testing:
+
+```
+4H SMT
+1H SMT
+```
+
+30M SMT:
+
+```
+Experimental
+```
+
+কারণ 30M-এর কাজ execution, primary thesis generation নয়।
+
+---
+
+## 20. RULE GROUP — POI
+
+### POI-01
+
+Valid structural confirmation-এর পরে POI খোঁজা হবে।
+
+Candidate:
+
+```
+FVG
+IFVG
+Breaker
+Unicorn
+```
+
+---
+
+## 21. POI-02 — FVG
+
+FVG = potential repricing location।
+
+❌ FVG alone = trade signal নয়।
+
+Required upstream context:
+
+```
+Context
++
+Liquidity Event
++
+Structure
+```
+
+---
+
+## 22. POI-03 — IFVG
+
+IFVG-কে:
+
+> Inversion / failed imbalance state
+
+হিসেবে treat করা হবে।
+
+এটি FVG-এর duplicate signal নয়।
+
+---
+
+## 23. POI-04 — Breaker
+
+Breaker = structural POI candidate।
+
+এটি directional thesis তৈরি করবে না।
+
+---
+
+## 24. POI-05 — Unicorn
+
+Unicorn:
+
+```
+Breaker
++
+FVG
+```
+
+composite POI classification হিসেবে থাকবে।
+
+❌ এভাবে নয়:
+
+```
+FVG +1
+Breaker +1
+Unicorn +1
+```
+
+কারণ এতে double-counting হবে।
+
+---
+
+## 25. RULE GROUP — TURTLE SOUP
+
+Turtle Soup-কে আমরা complete setup pathway হিসেবে রাখছি।
+
+Conceptual chain:
+
+```
+Liquidity
+↓
+External Sweep
+↓
+Rejection / Close Back
+↓
+MSS
+↓
+FVG / IFVG Confluence
+↓
+Retest / Inner Sweep
+↓
+Entry
+```
+
+এখানে একটি critical architectural decision:
+
+Turtle Soup-এর প্রতিটি component আলাদা signal হিসেবে count হবে না।
+
+বরং:
+
+```
+TURTLE_SOUP_SETUP = TRUE
+```
+
+একটি setup classification হবে।
+
+---
+
+## 26. Turtle Soup + Master Engine
+
+এখন engine-এ দুইটি pathway থাকতে পারে:
+
+**Generic pathway**
+
+```
+Sweep
+→ Reclaim
+→ CISD/MSS
+→ POI
+→ 30M
+```
+
+**Turtle Soup pathway**
+
+```
+Sweep
+→ Reclaim
+→ MSS
+→ FVG/IFVG
+→ Retest/Inner Sweep
+→ 30M
+```
+
+অর্থাৎ Turtle Soup generic engine-কে replace করবে না।
+
+এটা একটি specialized route।
+
+---
+
+## 27. Double Purge
+
+Current status:
+
+```
+DOUBLE_PURGE = OPTIONAL / TEST
+```
+
+যদি second breach setup invalidates করে:
+
+```
+Sweep
+↓
+Reclaim
+↓
+Second breach
+↓
+INVALIDATION
+```
+
+এই behaviour backtest-এ test হবে।
+
+---
+
+## 28. RULE GROUP — REGIME
+
+### REG-01 — Session
+
+তোমার current chart framework:
+
+```
+UTC-4
+
+Asia          19:00-22:00
+London        02:00-05:00
+New York      07:00-10:00
+London Close  10:00-12:00
+```
+
+Architecture:
+
+Session = Execution Priority
+
+not:
+
+Session = HTF Setup Validity
+
+---
+
+## 29. REG-02 — Volatility
+
+Three states:
+
+```
+NORMAL
+ELEVATED
+EXTREME
+```
+
+Initial purpose:
+
+```
+NORMAL
+→ normal execution
+
+ELEVATED
+→ caution / downgrade
+
+EXTREME
+→ potential block
+```
+
+Exact volatility metric:
+
+ATR / percentile-based approach-এর মধ্যে পরে নির্বাচন করব।
+
+---
+
+## 30. REG-03 — News
+
+Conceptual states:
+
+```
+NORMAL
+CAUTION
+BLOCK
+```
+
+কিছু Pine Script-এর বাস্তব data-access limitation আগে verify করতে হবে।
+
+আমরা এমন economic-calendar detector বানাব না যেটা শুধু দেখতে impressive কিন্তু reliable নয়।
+
+---
+
+## 31. RULE GROUP — EXECUTION
+
+### EXEC-01
+
+30M execution শুরু হবে কেবল যখন:
+
+```
+HTF Context
++
+Liquidity Event
++
+Reclaim
++
+Structural Confirmation
++
+Valid POI
+```
+
+complete হয়েছে।
+
+---
+
+## 32. EXEC-02 — 30M-এর role
+
+30M:
+
+> Execution refinement
+
+30M:
+
+❌ Primary directional engine নয়।
+
+---
+
+## 33. EXEC-03 — Entry Candidate
+
+Long:
+
+```
+1D bullish context
+        +
+4H sell-side sweep
+        +
+reclaim
+        +
+1H bullish structural confirmation
+        +
+valid bullish POI
+        +
+SMT not contradictory
+        +
+30M execution condition
+```
+
+→
+
+```
+LONG CANDIDATE
+```
+
+Short = mirror logic।
+
+---
+
+## 34. EXEC-04 — Final Entry Gate
+
+```
+                 ENTRY GATE
+                     │
+      ┌──────────────┼──────────────┐
+      ↓              ↓              ↓
+   Context        Structure        POI
+      │              │              │
+      └──────────────┼──────────────┘
+                      ↓
+                     SMT
+                      ↓
+                    Regime
+                      ↓
+                     30M
+                      ↓
+                    ENTRY
+```
+
+---
+
+## 35. RULE GROUP — INVALIDATION
+
+প্রতিটি setup-এর lifecycle:
+
+```
+ACTIVE
+TRIGGERED
+INVALIDATED
+EXPIRED
+```
+
+Invalidated examples:
+
+- Sweep thesis fails
+- Reclaim fails
+- Structural condition invalidates
+- POI invalidates
+- Opposing HTF condition becomes dominant
+- Double Purge invalidation condition
+- Extreme-risk regime
+
+---
+
+## 36. RULE GROUP — EXPIRY
+
+Setup indefinite থাকবে না।
+
+```
+SETUP CREATED
+        ↓
+WAIT
+        ↓
+No confirmation within allowed window
+        ↓
+EXPIRED
+```
+
+Exact expiry:
+
+Parameter — not yet locked.
+
+---
+
+## 37. MASTER SIGNAL LOGIC
+
+এখন আমাদের সবচেয়ে গুরুত্বপূর্ণ pseudocode:
+
+```
+IF
+    HTF_CONTEXT_VALID
+AND
+    LIQUIDITY_EVENT_VALID
+AND
+    RECLAIM_CONFIRMED
+AND
+    STRUCTURAL_CONFIRMATION_VALID
+AND
+    VALID_POI_EXISTS
+AND
+    REGIME_NOT_BLOCKED
+AND
+    EXECUTION_CONDITION_VALID
+
+THEN
+
+    EXECUTION_CANDIDATE = TRUE
+```
+
+তারপর:
+
+```
+SMT
+SESSION
+VOLATILITY
+POI QUALITY
+```
+
+candidate quality modify করবে।
+
+---
+
+## 38. Master Engine কখন BUY বলবে?
+
+LONG:
+
+```
+1D Context
+        ↓
+Bullish
+        ↓
+4H Sell-side liquidity event
+        ↓
+Reclaim
+        ↓
+1H Bullish CISD OR MSS
+        ↓
+Displacement qualification
+        ↓
+Bullish POI
+        ↓
+SMT ≠ contradictory
+        ↓
+Regime ≠ blocked
+        ↓
+30M execution
+        ↓
+LONG
+```
+
+---
+
+## 39. Master Engine কখন SELL বলবে?
+
+```
+1D Context
+        ↓
+Bearish
+        ↓
+4H Buy-side liquidity event
+        ↓
+Reclaim
+        ↓
+1H Bearish CISD OR MSS
+        ↓
+Displacement qualification
+        ↓
+Bearish POI
+        ↓
+SMT ≠ contradictory
+        ↓
+Regime ≠ blocked
+        ↓
+30M execution
+        ↓
+SHORT
+```
+
+---
+
+## 40. সবচেয়ে গুরুত্বপূর্ণ — NO TRADE ENGINE
+
+আমাদের indicator-এর সবচেয়ে valuable output শুধু:
+
+```
+BUY
+SELL
+```
+
+হবে না।
+
+বরং:
+
+```
+LONG
+SHORT
+WAIT
+NO TRADE
+INVALID
+EXPIRED
+```
+
+থাকবে।
+
+কারণ market-এর বড় অংশে কোনো trade নেওয়া উচিত নয়।
+
+---
+
+## 41. Signal Quality Model
+
+এখন আমি traditional "8/10 confluence" scoring ব্যবহার করছি না।
+
+বরং:
+
+**Tier A — Structural Validity**
+
+```
+Context
+Liquidity
+Reclaim
+Structure
+POI
+```
+
+**Tier B — Quality**
+
+```
+SMT
+Displacement quality
+POI quality
+```
+
+**Tier C — Execution**
+
+```
+Session
+30M confirmation
+Volatility
+News regime
+```
+
+এতে একই concept multiple times count হওয়ার risk কমে।
+
+---
+
+## 42. Current Signal Classes
+
+আমি provisionally:
+
+```
+A+
+A
+B
+C
+INVALID
+```
+
+রাখছি।
+
+কিন্তু A+/A/B/C-এর exact numerical definition এখনো lock করছি না।
+
+এটা গুরুত্বপূর্ণ—কারণ আমরা এখন যদি arbitrary 80%, 70%, 60% score বানাই, সেটা pseudo-precision হবে।
+
+
+## 43. Final Architecture v1.0
+
+<pre><code>┌───────────────────────────────────────┐
+│             MACRO LAYER               │
+│               1W / 1D                 │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│          LIQUIDITY EVENT LAYER        │
+│                4H                     │
+│      Range / Liquidity / Sweep        │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│           RECLAIM LAYER               │
+│          CRT / C2 / Reclaim            │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│         STRUCTURE LAYER               │
+│                1H                     │
+│       CISD / MSS / Displacement       │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│       CROSS-MARKET VALIDATION         │
+│            XAU ↔ XAG                  │
+│                SMT                    │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│             POI LAYER                 │
+│ FVG / IFVG / Breaker / Unicorn        │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│             REGIME LAYER              │
+│ Session / Volatility / News           │
+└───────────────────┬───────────────────┘
+                    ↓
+┌───────────────────────────────────────┐
+│          EXECUTION LAYER              │
+│                30M                    │
+└───────────────────┬───────────────────┘
+                    ↓
+              ENTRY CANDIDATE</code></pre>
