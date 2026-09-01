@@ -1,6 +1,6 @@
 # MASTER_ENGINE_STATE.md
 ### XAUUSD Master Engine — Implementation State Tracker
-**Last updated:** after Milestone 1 + Milestone 2
+**Last updated:** after Milestone 1 + Milestone 2, post compile-sentinel fix (CE10246)
 **Build file:** `MASTER_ENGINE_v0.1_M1M2.pine`
 
 ---
@@ -9,10 +9,12 @@
 
 | # | Milestone | Status | Notes |
 |---|---|---|---|
-| 1 | Pine v6 namespacing & source compatibility layer | ✅ DONE | All UDTs from all 5 source files renamed per Architecture Spec §B.2 (`crt_`, `cisd_`, `ifvg_`, `uni_`, `ts_`). Function-name collision map documented (Part 3 of .pine file) — bodies not yet ported, only the agreed target names, so later milestones cannot introduce new collisions. |
-| 2 | Canonical Master Engine data types | ✅ DONE | All 7 types from Architecture Spec §B.1 implemented verbatim: `me_LiquidityObject`, `me_SweepEvent`, `me_StructureEvent`, `me_DisplacementEvent`, `me_SMTSubSignal`, `me_SMTAggregate`, `me_ContextState`, `me_SetupGenealogy`. |
+| 1 | Pine v6 namespacing & source compatibility layer | ⚠️ CODE COMPLETE — compile verification pending | All UDTs from all 5 source files renamed per Architecture Spec §B.2 (`crt_`, `cisd_`, `ifvg_`, `uni_`, `ts_`). Function-name collision map documented (Part 3 of .pine file) — bodies not yet ported, only the agreed target names, so later milestones cannot introduce new collisions. |
+| 2 | Canonical Master Engine data types | ⚠️ CODE COMPLETE — compile verification pending | All 7 types from Architecture Spec §B.1 implemented verbatim: `me_LiquidityObject`, `me_SweepEvent`, `me_StructureEvent`, `me_DisplacementEvent`, `me_SMTSubSignal`, `me_SMTAggregate`, `me_ContextState`, `me_SetupGenealogy`. First compile attempt returned CE10246 (see §4) — resolved with an inert temporary sentinel, not yet re-verified. |
 
 **Not yet started:** Milestones 3–19 (Liquidity/Sweep adapters through Performance audit).
+
+**Neither milestone will be marked ✅ fully verified until TradingView confirms a clean compile of the current file.**
 
 ---
 
@@ -43,11 +45,18 @@
 
 ## 4. COMPILE STATUS
 
-**UNVERIFIED.** No Pine compiler is available in this development environment. The file has been hand-reviewed for:
-- Duplicate type/function identifiers (none found across the 5 source namespaces + Master types).
-- Pine v6 type-field default-value syntax validity (spot-checked against source patterns already proven to compile in the original 5 scripts).
+**AWAITING USER VERIFICATION.** (Not yet marked compile-verified — see below.)
 
-**Action required from you:** paste this file into the TradingView Pine Editor and report any compiler errors before Milestone 3 begins, so errors are caught at the smallest possible surface area (types + constants only, no logic yet).
+**History:**
+- **First TradingView compile attempt:** returned `CE10246` — *"An indicator must contain at least one of the following: any 'plot*()' function, 'barcolor()', 'bgcolor()', 'hline()', 'alertcondition()', or any drawing (line, label, box, table, polyline)."*
+  - **Root cause:** expected and benign. Milestones 1–2 deliberately contain only type declarations and inert state scaffolding — no plotting, drawing, or signal logic exists yet by design, and TradingView requires at least one visual/output call for any script to compile, regardless of whether that script does anything meaningful yet.
+  - **Resolution applied:** a single **temporary compile sentinel** was added at the end of the file:
+    ```
+    plot(na, title = "TEMPORARY COMPILE SENTINEL — REMOVE/REPLACE DURING FIRST VISUAL MILESTONE", display = display.none)
+    ```
+    This plots `na` (renders nothing) with `display = display.none` (suppressed from every pane/scale/data window). It reads no series, touches no Master Engine or source-derived state, and has zero effect on calculations, signals, alerts, backtesting, or repaint behavior. It is clearly marked with a `REMOVE/REPLACE DURING FIRST VISUAL MILESTONE` banner in the code and must be deleted the moment genuine visual/signal output is introduced (expected Milestone 4 or Milestone 14).
+
+**Outstanding action required from you:** re-run the TradingView compile test on the updated file (below) and confirm a clean compile (or report the next error verbatim). **Milestone 2 is not marked fully compile-verified until that confirmation is received.**
 
 ---
 
