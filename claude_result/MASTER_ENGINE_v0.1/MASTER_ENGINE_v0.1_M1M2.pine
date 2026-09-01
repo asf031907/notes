@@ -526,10 +526,36 @@ grp_meContext = "Master Engine — 1W/1D Context (CONFIGURABLE RESEARCH MODULE)"
 // when Milestone 6 (1W/1D Context) is implemented.
 
 // =============================================================================
+// TEMPORARY COMPILE SENTINEL — REMOVE/REPLACE DURING FIRST VISUAL MILESTONE
+// =============================================================================
+// TradingView requires every indicator() script to contain at least one
+// plot*(), barcolor(), bgcolor(), hline(), alertcondition(), or drawing call
+// (compiler error CE10246). Milestones 1-2 intentionally contain zero
+// plotting/drawing/signal logic (types and state scaffolding only), so this
+// requirement cannot be met by any real output without violating the
+// "do not add trading logic just to satisfy the compiler" instruction.
+//
+// The line below is a NO-OP sentinel:
+//   - plots `na` (nothing is ever drawn — `na` never renders a point/line)
+//   - `display = display.none` additionally suppresses it from every pane,
+//     the price scale, and the data window
+//   - it reads no series, touches no Master Engine or source-derived state,
+//     computes nothing, and has no effect on calculations, signals, alerts,
+//     backtesting, or repaint behavior
+//
+// It exists ONLY to satisfy CE10246 during this scaffolding phase and MUST
+// be deleted (or replaced by real, milestone-appropriate output) the moment
+// the first genuine visual/signal element is introduced — per the plan,
+// that is expected no earlier than Milestone 4 (4H CRT primary engine) or
+// Milestone 14 (Debug Mode), whichever produces the first real draw call.
+plot(na, title = "TEMPORARY COMPILE SENTINEL — REMOVE/REPLACE DURING FIRST VISUAL MILESTONE", display = display.none)
+
+// =============================================================================
 // END OF MILESTONE 1 + 2
-// No plotting, alerting, or signal logic is executed yet. This file is
-// expected to compile with all declarations above, but performs no chart
-// drawing beyond the bare indicator() shell — this is intentional for this
-// milestone (verifies namespacing/type-collision resolution in isolation
-// before any detection logic is layered on top in Milestone 3+).
+// No plotting, alerting, or signal logic is executed yet beyond the inert
+// sentinel immediately above. This file is expected to compile with all
+// declarations above, but performs no meaningful chart drawing — this is
+// intentional for this milestone (verifies namespacing/type-collision
+// resolution in isolation before any detection logic is layered on top in
+// Milestone 3+).
 // =============================================================================
